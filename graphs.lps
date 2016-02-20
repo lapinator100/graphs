@@ -3,46 +3,66 @@
   <ProjectSession>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="2">
+    <Units Count="3">
       <Unit0>
         <Filename Value="graphs.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="graphs"/>
         <UsageCount Value="20"/>
       </Unit0>
       <Unit1>
         <Filename Value="app.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="app"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="0"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="26"/>
+        <TopLine Value="14"/>
+        <CursorPos X="43" Y="34"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="/Volumes/STEFFEN/Informatikscheiss/unit1.pas"/>
+        <UnitName Value="Unit1"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="77" Y="18"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit2>
     </Units>
-    <General>
-      <ActiveWindowIndexAtStart Value="0"/>
-    </General>
-    <JumpHistory Count="3" HistoryIndex="2">
+    <JumpHistory Count="8" HistoryIndex="7">
       <Position1>
         <Filename Value="app.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
       </Position1>
       <Position2>
         <Filename Value="app.pas"/>
-        <Caret Line="26" Column="1" TopLine="1"/>
+        <Caret Line="26"/>
       </Position2>
       <Position3>
         <Filename Value="app.pas"/>
-        <Caret Line="15" Column="11" TopLine="1"/>
+        <Caret Line="15" Column="11"/>
       </Position3>
+      <Position4>
+        <Filename Value="app.pas"/>
+        <Caret Line="99" Column="18" TopLine="44"/>
+      </Position4>
+      <Position5>
+        <Filename Value="app.pas"/>
+        <Caret Line="12"/>
+      </Position5>
+      <Position6>
+        <Filename Value="app.pas"/>
+        <Caret Line="14" Column="27"/>
+      </Position6>
+      <Position7>
+        <Filename Value="app.pas"/>
+        <Caret Line="15" Column="23"/>
+      </Position7>
+      <Position8>
+        <Filename Value="app.pas"/>
+        <Caret Line="47" Column="8" TopLine="23"/>
+      </Position8>
     </JumpHistory>
   </ProjectSession>
-  <EditorMacros Count="0"/>
 </CONFIG>
