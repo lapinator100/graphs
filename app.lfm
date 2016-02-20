@@ -7,6 +7,7 @@ object AppForm: TAppForm
   ClientHeight = 448
   ClientWidth = 501
   OnCreate = FormCreate
+  Position = poDesktopCenter
   LCLVersion = '1.6.0.4'
   object grid: TStringGrid
     Left = 8
@@ -45,7 +46,7 @@ object AppForm: TAppForm
     Value = 2
   end
   object breadthFirstSearchButton: TButton
-    Left = 384
+    Left = 272
     Height = 21
     Top = 8
     Width = 107
@@ -53,5 +54,15 @@ object AppForm: TAppForm
     Caption = 'Breitensuche'
     OnClick = breadthFirstSearchButtonClick
     TabOrder = 2
+  end
+  object depthFirstSearchButton: TButton
+    Left = 387
+    Height = 21
+    Top = 8
+    Width = 107
+    Anchors = [akTop, akRight]
+    Caption = 'Tiefensuche'
+    OnClick = depthFirstSearchButtonClick
+    TabOrder = 3
   end
 end

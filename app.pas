@@ -14,10 +14,12 @@ type
 
   TAppForm = class(TForm)
     breadthFirstSearchButton: TButton;
+    depthFirstSearchButton: TButton;
     matrixSizeInput: TSpinEdit;
     grid: TStringGrid;
 
     procedure breadthFirstSearchButtonClick(Sender: TObject);
+    procedure depthFirstSearchButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
     procedure matrixSizeInputChange(Sender: TObject);
@@ -172,6 +174,55 @@ begin
   result := edges;
 end;
 
+{ Perform depth-first search on adjacency matrix given
+
+  Return list of edges being a spanning tree.
+}
+function depthFirstSearch(matrix: TAdjacencyMatrix): TEdgeList;
+var
+  currentVertex, nextNeighbourVertex: Integer;
+  activeVertexes, processedVertexes: TVertexList;
+  currentEdge: TEdge;
+  edges: TEdgeList;
+begin
+  //initialize active and processed vertexes list with first vertex
+  setLength(activeVertexes, 1);
+  activeVertexes[0] := 0;
+  setLength(processedVertexes, 1);
+  processedVertexes[0] := 0;
+
+  //repeat until all active nodes' neighbours are processed
+  while length(activeVertexes) <> 0 do
+  begin
+    //get last vertex from active vertex and its next neighbour
+    currentVertex := activeVertexes[length(activeVertexes) - 1];
+    nextNeighbourVertex := getNextNeighbourVertex(matrix, currentVertex, processedVertexes);
+
+    //test wether a neighbour was found
+    if nextNeighbourVertex = -1 then
+    begin
+      //remove last vertex from active vertexes list
+      SetLength(activeVertexes, Length(activeVertexes) - 1);
+    end
+    else
+    begin
+      //add neighbour vertex to active and proccessed neighbor list
+      setLength(activeVertexes, length(activeVertexes) + 1);
+      activeVertexes[length(activeVertexes) - 1] := nextNeighbourVertex;
+      setLength(processedVertexes, length(processedVertexes) + 1);
+      processedVertexes[length(processedVertexes) - 1] := nextNeighbourVertex;
+
+      //add edge from currently active to neighbour vertex
+      currentEdge.first := currentVertex;
+      currentEdge.second := nextNeighbourVertex;
+      setLength(edges, length(edges) + 1);
+      edges[length(edges) -1] := currentEdge;
+    end;
+  end;
+
+  result := edges;
+end;
+
 
 {$R *.lfm}
 
@@ -226,6 +277,18 @@ procedure TAppForm.breadthFirstSearchButtonClick(Sender: TObject);
 var edges: TEdgeList;
 begin
   edges := breadthFirstSearch(adjacencyMatrix);
+
+  //reset current matrix, add edges, and resfresh UI
+  clearMatrix(adjacencyMatrix);
+  applyEdgesToMatrix(adjacencyMatrix, edges);
+  refreshGrid;
+end;
+
+{ Perform depth-first serach on adjacency matrix }
+procedure TAppForm.depthFirstSearchButtonClick(Sender: TObject);
+var edges: TEdgeList;
+begin
+  edges := depthFirstSearch(adjacencyMatrix);
 
   //reset current matrix, add edges, and resfresh UI
   clearMatrix(adjacencyMatrix);
