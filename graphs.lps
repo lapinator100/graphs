@@ -7,7 +7,7 @@
       <Unit0>
         <Filename Value="graphs.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="22"/>
       </Unit0>
       <Unit1>
         <Filename Value="app.pas"/>
@@ -16,22 +16,21 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="14"/>
-        <CursorPos X="43" Y="34"/>
-        <UsageCount Value="20"/>
+        <TopLine Value="43"/>
+        <CursorPos X="7" Y="70"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="/Volumes/STEFFEN/Informatikscheiss/unit1.pas"/>
         <UnitName Value="Unit1"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="77" Y="18"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit2>
     </Units>
-    <JumpHistory Count="8" HistoryIndex="7">
+    <JumpHistory Count="20" HistoryIndex="19">
       <Position1>
         <Filename Value="app.pas"/>
       </Position1>
@@ -63,6 +62,65 @@
         <Filename Value="app.pas"/>
         <Caret Line="47" Column="8" TopLine="23"/>
       </Position8>
+      <Position9>
+        <Filename Value="app.pas"/>
+        <Caret Line="34" Column="43" TopLine="14"/>
+      </Position9>
+      <Position10>
+        <Filename Value="app.pas"/>
+        <Caret Line="95" Column="7"/>
+      </Position10>
+      <Position11>
+        <Filename Value="app.pas"/>
+        <Caret Line="107" Column="23" TopLine="76"/>
+      </Position11>
+      <Position12>
+        <Filename Value="app.pas"/>
+        <Caret Line="83" Column="11" TopLine="59"/>
+      </Position12>
+      <Position13>
+        <Filename Value="app.pas"/>
+        <Caret Line="86" Column="34" TopLine="59"/>
+      </Position13>
+      <Position14>
+        <Filename Value="app.pas"/>
+        <Caret Line="81" Column="26" TopLine="59"/>
+      </Position14>
+      <Position15>
+        <Filename Value="app.pas"/>
+        <Caret Line="85" Column="3" TopLine="62"/>
+      </Position15>
+      <Position16>
+        <Filename Value="app.pas"/>
+        <Caret Line="89" Column="23" TopLine="64"/>
+      </Position16>
+      <Position17>
+        <Filename Value="app.pas"/>
+        <Caret Line="149" Column="31"/>
+      </Position17>
+      <Position18>
+        <Filename Value="app.pas"/>
+        <Caret Line="33" Column="34" TopLine="13"/>
+      </Position18>
+      <Position19>
+        <Filename Value="app.pas"/>
+        <Caret Line="59" Column="26" TopLine="52"/>
+      </Position19>
+      <Position20>
+        <Filename Value="app.pas"/>
+        <Caret Line="91" Column="66" TopLine="52"/>
+      </Position20>
     </JumpHistory>
   </ProjectSession>
+  <Debugging>
+    <BreakPoints Count="1">
+      <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="app.pas"/>
+        <Line Value="150"/>
+      </Item1>
+    </BreakPoints>
+  </Debugging>
 </CONFIG>

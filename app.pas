@@ -13,13 +13,14 @@ type
     btn_tree: TButton;
     input: TSpinEdit;
     grid: TStringGrid;
+
     procedure btn_treeClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer;
       var CanSelect: Boolean);
     procedure inputChange(Sender: TObject);
-    procedure fillGrid;
-    procedure refresh;
+
+    procedure refreshGrid;
   private
   private
     { private declarations }
@@ -34,6 +35,16 @@ var
   matrix: array of array of TVertexState;
 
 implementation
+
+procedure fillGrid;
+var
+  x, y: Integer;
+begin
+  for x := 0 to length(matrix) - 1 do
+    for y := 0 to length(matrix[x]) - 1 do
+      if matrix[x, y] = Unset then
+        matrix[x, y] := Unconnected;
+end;
 
 {$R *.lfm}
 
@@ -53,7 +64,7 @@ begin
       matrix[aCol - 1, aRow - 1] := Connected;
 
     CanSelect := True;
-    refresh;
+    refreshGrid;
   end
   else
     CanSelect := False;
@@ -72,67 +83,15 @@ begin
     setLength(matrix[i], input.Value);
 
   fillGrid;
-  refresh;
+  refreshGrid;
 end;
 
 procedure TForm1.btn_treeClick(Sender: TObject);
-var
-  current, processed: array of Integer;
-  current_node, i: Integer;
 begin
-  {current.setLength(1);
-  current[0] := 0;
-  processed.setLength(1);
-  processed[0] := 0;
-
-  if length(current) == 0 then
-    result := //e0
-  else
-  begin
-    current_node := current[0];
-
-    neighbour := neighbour_nodes(current, current_node);
-    if neighbours then
-    begin
-      for i := 0 to length(current) - 2 do
-        current[i] := current[i + 1];
-
-      setLength(current, length(current) - 1);
-    end
-    else
-    begin
-
-    end;
-  end;}
+  breadthFirstSearch();
 end;
 
-function neighbour_nodes(current: array of Integer; current_node: Integer): Integer;
-var
-  y, i: Integer;
-begin
-  {for y := 0 to length(matrix[current_node]) - 1 do
-    if matrix[current_node, y] = Connected then
-      for i := 0 to length(current[current_node]) - 1 do                     // <----- Hier nach Fehlern suchen!
-        if not matrix[current_node, i] = current[current_node, y] then
-        begin
-          result := i;
-          exit;
-        end;
-
-  result := -1;}
-end;
-
-procedure TForm1.fillGrid;
-var
-  x, y: Integer;
-begin
-  for x := 0 to length(matrix) - 1 do
-    for y := 0 to length(matrix[x]) - 1 do
-      if matrix[x, y] = Unset then
-        matrix[x, y] := Unconnected;
-end;
-
-procedure TForm1.refresh;
+procedure TForm1.refreshGrid;
 var
   x, y: Integer;
 begin
