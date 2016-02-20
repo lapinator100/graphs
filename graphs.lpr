@@ -13,9 +13,10 @@ uses
 {$R *.res}
 
 begin
+  Application.Title:='Graphen';
   RequireDerivedFormResource := True;
   Application.Initialize;
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TAppForm, AppForm);
   Application.Run;
 end.
 

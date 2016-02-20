@@ -1,9 +1,9 @@
-object Form1: TForm1
-  Left = 385
+object AppForm: TAppForm
+  Left = 585
   Height = 448
-  Top = 130
+  Top = 624
   Width = 501
-  Caption = 'Form1'
+  Caption = 'Graphen'
   ClientHeight = 448
   ClientWidth = 501
   OnCreate = FormCreate
@@ -34,24 +34,24 @@ object Form1: TForm1
     TitleFont.Quality = fqDraft
     OnSelectCell = gridSelectCell
   end
-  object input: TSpinEdit
-    Left = 8
+  object matrixSizeInput: TSpinEdit
+    Left = 10
     Height = 16
-    Top = 8
+    Top = 11
     Width = 80
     MinValue = 2
-    OnChange = inputChange
+    OnChange = matrixSizeInputChange
     TabOrder = 1
     Value = 2
   end
-  object btn_tree: TButton
-    Left = 408
-    Height = 25
+  object breadthFirstSearchButton: TButton
+    Left = 384
+    Height = 21
     Top = 8
-    Width = 83
+    Width = 107
     Anchors = [akTop, akRight]
     Caption = 'Breitensuche'
-    OnClick = btn_treeClick
+    OnClick = breadthFirstSearchButtonClick
     TabOrder = 2
   end
 end

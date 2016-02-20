@@ -10,17 +10,17 @@ uses
 
 type
 
-  { TForm1 }
+  { TAppForm }
 
-  TForm1 = class(TForm)
-    btn_tree: TButton;
-    input: TSpinEdit;
+  TAppForm = class(TForm)
+    breadthFirstSearchButton: TButton;
+    matrixSizeInput: TSpinEdit;
     grid: TStringGrid;
 
-    procedure btn_treeClick(Sender: TObject);
+    procedure breadthFirstSearchButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
-    procedure inputChange(Sender: TObject);
+    procedure matrixSizeInputChange(Sender: TObject);
 
     procedure refreshGrid;
   private
@@ -41,7 +41,7 @@ type
   TEdgeList = array of TEdge;
 
 var
-  Form1: TForm1;
+  AppForm: TAppForm;
   adjacencyMatrix: TAdjacencyMatrix;
 
 implementation
@@ -176,14 +176,14 @@ end;
 {$R *.lfm}
 
 { executed on form creation }
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TAppForm.FormCreate(Sender: TObject);
 begin
   //emulate change of adjacency matrix's size for initialization
-  inputChange(Sender);
+  matrixSizeInputChange(Sender);
 end;
 
 { Handle cell selection in grid }
-procedure TForm1.gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
+procedure TAppForm.gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
 begin
   //make sure a valid position was selected
   if (aCol > 0) and (aRow > 0) then
@@ -201,20 +201,20 @@ begin
     CanSelect := False;
 end;
 
-{ Handle change of matrix size input value }
-procedure TForm1.inputChange(Sender: TObject);
+{ Handle change of matrix size matrixSizeInput value }
+procedure TAppForm.matrixSizeInputChange(Sender: TObject);
 var
   i: Integer;
 begin
   //adapt size of grid
-  grid.RowCount := input.Value + 1;
-  grid.ColCount := input.Value + 1;
+  grid.RowCount := matrixSizeInput.Value + 1;
+  grid.ColCount := matrixSizeInput.Value + 1;
 
   //adapt size of matrix
-  setLength(adjacencyMatrix, input.Value);
+  setLength(adjacencyMatrix, matrixSizeInput.Value);
 
   for i := 0 to length(adjacencyMatrix) - 1 do
-    setLength(adjacencyMatrix[i], input.Value);
+    setLength(adjacencyMatrix[i], matrixSizeInput.Value);
 
   //fill new values and refresh UI
   fillMatrix(adjacencyMatrix);
@@ -222,7 +222,7 @@ begin
 end;
 
 { Perform breadth-first serach on adjacency matrix }
-procedure TForm1.btn_treeClick(Sender: TObject);
+procedure TAppForm.breadthFirstSearchButtonClick(Sender: TObject);
 var edges: TEdgeList;
 begin
   edges := breadthFirstSearch(adjacencyMatrix);
@@ -234,7 +234,7 @@ begin
 end;
 
 { Refresh grid UI from adjacency matrix }
-procedure TForm1.refreshGrid;
+procedure TAppForm.refreshGrid;
 var
   x, y: Integer;
 begin
