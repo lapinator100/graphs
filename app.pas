@@ -248,9 +248,15 @@ begin
 
   //change vertex state based on its current state
   if adjacencyMatrix[aCol - 1, aRow - 1] = Connected then
-    adjacencyMatrix[aCol - 1, aRow - 1] := Unconnected
+  begin
+    adjacencyMatrix[aCol - 1, aRow - 1] := Unconnected;
+    adjacencyMatrix[aRow - 1, aCol - 1] := Unconnected;
+  end
   else
+  begin
     adjacencyMatrix[aCol - 1, aRow - 1] := Connected;
+    adjacencyMatrix[aRow - 1, aCol - 1] := Connected;
+  end;
 
   refreshGrid;
 end;
