@@ -19,8 +19,7 @@ type
 
     procedure btn_treeClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer;
-      var CanSelect: Boolean);
+    procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
     procedure inputChange(Sender: TObject);
 
     procedure refreshGrid;
@@ -37,7 +36,7 @@ type
   end;
 
   TVertexState = (Unset=0, Unconnected=1, Connected=2);
-  TNodeList = array of Integer;
+  TVertexList = array of Integer;
   TEdgeList = array of TEdge;
 
 var
@@ -76,12 +75,12 @@ begin
   end;
 end;
 
-function isVertexInNodeList(node: Integer; nodeList: TNodeList): Boolean;
+function isVertexInList(vertex: Integer; vertexList: TVertexList): Boolean;
 var
   i: Integer;
 begin
-  for i := 0 to length(nodeList) - 1 do
-    if nodeList[i] = node then
+  for i := 0 to length(vertexList) - 1 do
+    if vertexList[i] = vertex then
     begin
       result := True;
       exit;
@@ -90,14 +89,14 @@ begin
   result := False;
 end;
 
-function getNextNeighbourNode(node: Integer; exludeNodes: TNodeList): Integer;
+function getNextNeighbourVertex(vertex: Integer; exludeVertexes: TVertexList): Integer;
 var
   y: Integer;
 begin
-  for y := 0 to length(matrix[node]) - 1 do
-    if matrix[node, y] = Connected then
+  for y := 0 to length(matrix[vertex]) - 1 do
+    if matrix[vertex, y] = Connected then
     begin
-      if not isVertexInNodeList(y, exludeNodes) then
+      if not isVertexInList(y, exludeVertexes) then
       begin
         result := y;
         exit;
@@ -109,35 +108,35 @@ end;
 
 function breadthFirstSearch: TEdgeList;
 var
-  currentNode, nextNeighbourNode: Integer;
-  activeNodes, processedNodes: TNodeList;
+  currentVertex, nextNeighbourVertex: Integer;
+  activeVertexes, processedVertexes: TVertexList;
   currentEdge: TEdge;
   edges: TEdgeList;
 begin
-  setLength(activeNodes, 1);
-  activeNodes[0] := 0;
-  setLength(processedNodes, 1);
-  processedNodes[0] := 0;
+  setLength(activeVertexes, 1);
+  activeVertexes[0] := 0;
+  setLength(processedVertexes, 1);
+  processedVertexes[0] := 0;
 
-  while length(activeNodes) <> 0 do
+  while length(activeVertexes) <> 0 do
   begin
-    currentNode := activeNodes[0];
-    nextNeighbourNode := getNextNeighbourNode(currentNode, processedNodes);
+    currentVertex := activeVertexes[0];
+    nextNeighbourVertex := getNextNeighbourVertex(currentVertex, processedVertexes);
 
-    if nextNeighbourNode = -1 then
+    if nextNeighbourVertex = -1 then
     begin
-      Move(activeNodes[1], activeNodes[0], SizeOf(activeNodes[0]) * (Length(activeNodes) - 1));
-      SetLength(activeNodes, Length(activeNodes) - 1);
+      Move(activeVertexes[1], activeVertexes[0], SizeOf(activeVertexes[0]) * (Length(activeVertexes) - 1));
+      SetLength(activeVertexes, Length(activeVertexes) - 1);
     end
     else
     begin
-      setLength(activeNodes, length(activeNodes) + 1);
-      activeNodes[length(activeNodes) - 1] := nextNeighbourNode;
-      setLength(processedNodes, length(processedNodes) + 1);
-      processedNodes[length(processedNodes) - 1] := nextNeighbourNode;
+      setLength(activeVertexes, length(activeVertexes) + 1);
+      activeVertexes[length(activeVertexes) - 1] := nextNeighbourVertex;
+      setLength(processedVertexes, length(processedVertexes) + 1);
+      processedVertexes[length(processedVertexes) - 1] := nextNeighbourVertex;
 
-      currentEdge.first := currentNode;
-      currentEdge.second := nextNeighbourNode;
+      currentEdge.first := currentVertex;
+      currentEdge.second := nextNeighbourVertex;
       setLength(edges, length(edges) + 1);
       edges[length(edges) -1] := currentEdge;
     end;
