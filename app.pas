@@ -236,20 +236,23 @@ end;
 { Handle cell selection in grid }
 procedure TAppForm.gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
 begin
-  //make sure a valid position was selected
-  if (aCol > 0) and (aRow > 0) then
-  begin
-    //change vertex state based on its current state
-    if adjacencyMatrix[aCol - 1, aRow - 1] = Connected then
-      adjacencyMatrix[aCol - 1, aRow - 1] := Unconnected
-    else
-      adjacencyMatrix[aCol - 1, aRow - 1] := Connected;
+  CanSelect := True;
 
-    refreshGrid;
-    CanSelect := True;
-  end
+  //make sure a valid position was selected
+  if (aCol = 0) or (aRow = 0) then
+    exit;
+
+  //disallow a vertex being connected with itself
+  if aCol = aRow then
+    exit;
+
+  //change vertex state based on its current state
+  if adjacencyMatrix[aCol - 1, aRow - 1] = Connected then
+    adjacencyMatrix[aCol - 1, aRow - 1] := Unconnected
   else
-    CanSelect := False;
+    adjacencyMatrix[aCol - 1, aRow - 1] := Connected;
+
+  refreshGrid;
 end;
 
 { Handle change of matrix size matrixSizeInput value }
