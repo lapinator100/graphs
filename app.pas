@@ -9,6 +9,9 @@ uses
   StdCtrls;
 
 type
+
+  { TForm1 }
+
   TForm1 = class(TForm)
     btn_tree: TButton;
     input: TSpinEdit;
@@ -43,7 +46,16 @@ var
 
 implementation
 
-procedure fillGrid;
+procedure clearMatrix;
+var
+  x, y: Integer;
+begin
+  for x := 0 to length(matrix) - 1 do
+    for y := 0 to length(matrix[x]) - 1 do
+      matrix[x, y] := Unconnected;
+end;
+
+procedure fillMatrix;
 var
   x, y: Integer;
 begin
@@ -51,6 +63,17 @@ begin
     for y := 0 to length(matrix[x]) - 1 do
       if matrix[x, y] = Unset then
         matrix[x, y] := Unconnected;
+end;
+
+procedure applyEdgesToMatrix(edges: TEdgeList);
+var
+  i: Integer;
+begin
+  for i := 0 to length(edges) - 1 do
+  begin
+    matrix[edges[i].first][edges[i].second] := Connected;
+    matrix[edges[i].second][edges[i].first] := Connected;
+  end;
 end;
 
 {$R *.lfm}
@@ -89,7 +112,7 @@ begin
   for i := 0 to length(matrix) - 1 do
     setLength(matrix[i], input.Value);
 
-  fillGrid;
+  fillMatrix;
   refreshGrid;
 end;
 
