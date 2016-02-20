@@ -36,16 +36,18 @@ type
   end;
 
   TVertexState = (Unset=0, Unconnected=1, Connected=2);
+  TAdjacencyMatrix = array of array of TVertexState;
   TVertexList = array of Integer;
   TEdgeList = array of TEdge;
 
 var
   Form1: TForm1;
-  matrix: array of array of TVertexState;
+  adjacencyMatrix: TAdjacencyMatrix;
 
 implementation
 
-procedure clearMatrix;
+
+procedure clearMatrix(var matrix: TAdjacencyMatrix);
 var
   x, y: Integer;
 begin
@@ -54,7 +56,7 @@ begin
       matrix[x, y] := Unconnected;
 end;
 
-procedure fillMatrix;
+procedure fillMatrix(var matrix: TAdjacencyMatrix);
 var
   x, y: Integer;
 begin
@@ -64,7 +66,7 @@ begin
         matrix[x, y] := Unconnected;
 end;
 
-procedure applyEdgesToMatrix(edges: TEdgeList);
+procedure applyEdgesToMatrix(var matrix: TAdjacencyMatrix; edges: TEdgeList);
 var
   i: Integer;
 begin
@@ -89,7 +91,8 @@ begin
   result := False;
 end;
 
-function getNextNeighbourVertex(vertex: Integer; exludeVertexes: TVertexList): Integer;
+function getNextNeighbourVertex(matrix: TAdjacencyMatrix; vertex: Integer;
+  exludeVertexes: TVertexList): Integer;
 var
   y: Integer;
 begin
@@ -106,7 +109,7 @@ begin
   result := -1;
 end;
 
-function breadthFirstSearch: TEdgeList;
+function breadthFirstSearch(matrix: TAdjacencyMatrix): TEdgeList;
 var
   currentVertex, nextNeighbourVertex: Integer;
   activeVertexes, processedVertexes: TVertexList;
@@ -121,7 +124,7 @@ begin
   while length(activeVertexes) <> 0 do
   begin
     currentVertex := activeVertexes[0];
-    nextNeighbourVertex := getNextNeighbourVertex(currentVertex, processedVertexes);
+    nextNeighbourVertex := getNextNeighbourVertex(matrix, currentVertex, processedVertexes);
 
     if nextNeighbourVertex = -1 then
     begin
@@ -157,10 +160,10 @@ procedure TForm1.gridSelectCell(Sender: TObject; aCol, aRow: Integer;
 begin
   if (aCol > 0) and (aRow > 0) then
   begin
-    if matrix[aCol - 1, aRow - 1] = Connected then
-      matrix[aCol - 1, aRow - 1] := Unconnected
+    if adjacencyMatrix[aCol - 1, aRow - 1] = Connected then
+      adjacencyMatrix[aCol - 1, aRow - 1] := Unconnected
     else
-      matrix[aCol - 1, aRow - 1] := Connected;
+      adjacencyMatrix[aCol - 1, aRow - 1] := Connected;
 
     CanSelect := True;
     refreshGrid;
@@ -176,22 +179,22 @@ begin
   grid.RowCount := input.Value + 1;
   grid.ColCount := input.Value + 1;
 
-  setLength(matrix, input.Value);
+  setLength(adjacencyMatrix, input.Value);
 
-  for i := 0 to length(matrix) - 1 do
-    setLength(matrix[i], input.Value);
+  for i := 0 to length(adjacencyMatrix) - 1 do
+    setLength(adjacencyMatrix[i], input.Value);
 
-  fillMatrix;
+  fillMatrix(adjacencyMatrix);
   refreshGrid;
 end;
 
 procedure TForm1.btn_treeClick(Sender: TObject);
 var edges: TEdgeList;
 begin
-  edges := breadthFirstSearch();
+  edges := breadthFirstSearch(adjacencyMatrix);
 
-  clearMatrix;
-  applyEdgesToMatrix(edges);
+  clearMatrix(adjacencyMatrix);
+  applyEdgesToMatrix(adjacencyMatrix, edges);
   refreshGrid;
 end;
 
@@ -199,10 +202,10 @@ procedure TForm1.refreshGrid;
 var
   x, y: Integer;
 begin
-  for x := 0 to length(matrix) - 1 do
-    for y := 0 to length(matrix[x]) - 1 do
+  for x := 0 to length(adjacencyMatrix) - 1 do
+    for y := 0 to length(adjacencyMatrix[x]) - 1 do
       if (x < grid.ColCount - 1) and (y < grid.RowCount - 1) then
-        if matrix[x, y] = Unconnected then
+        if adjacencyMatrix[x, y] = Unconnected then
           grid.Cells[x + 1, y + 1] := '0'
         else
           grid.Cells[x + 1, y + 1] := '1';
