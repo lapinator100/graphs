@@ -28,7 +28,14 @@ type
     { public declarations }
   end;
 
+  TEdge = record
+    first: Integer;
+    second: Integer;
+  end;
+
   TVertexState = (Unset=0, Unconnected=1, Connected=2);
+  TNodeList = array of Integer;
+  TEdgeList = array of TEdge;
 
 var
   Form1: TForm1;
