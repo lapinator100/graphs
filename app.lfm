@@ -47,9 +47,9 @@ object AppForm: TAppForm
     Value = 2
   end
   object breadthFirstSearchButton: TButton
-    Left = 287
+    Left = 288
     Height = 20
-    Top = 8
+    Top = 9
     Width = 100
     Anchors = [akTop, akRight]
     Caption = 'Breitensuche'
@@ -105,5 +105,35 @@ object AppForm: TAppForm
     Caption = 'gewichtet'
     OnChange = weightedCheckBoxChange
     TabOrder = 7
+  end
+  object loadButton: TButton
+    Left = 200
+    Height = 20
+    Top = 8
+    Width = 83
+    Anchors = [akTop, akRight]
+    Caption = 'laden'
+    OnClick = loadButtonClick
+    TabOrder = 8
+  end
+  object saveButton: TButton
+    Left = 200
+    Height = 20
+    Top = 32
+    Width = 83
+    Anchors = [akTop, akRight]
+    Caption = 'speichern'
+    OnClick = saveButtonClick
+    TabOrder = 9
+  end
+  object saveDialog: TSaveDialog
+    DefaultExt = '.admat'
+    left = 456
+    top = 408
+  end
+  object openDialog: TOpenDialog
+    DefaultExt = '.admat'
+    left = 424
+    top = 408
   end
 end

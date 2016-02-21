@@ -14,8 +14,12 @@ type
 
   TAppForm = class(TForm)
     breadthFirstSearchButton: TButton;
+    loadButton: TButton;
+    openDialog: TOpenDialog;
+    saveButton: TButton;
     kruskalAlgorithmButton: TButton;
     PrimAlgorithmButton: TButton;
+    saveDialog: TSaveDialog;
     weightedCheckBox: TCheckBox;
     symmetryCheckBox: TCheckBox;
     depthFirstSearchButton: TButton;
@@ -29,8 +33,10 @@ type
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
     procedure gridValidateEntry(sender: TObject; aCol, aRow: Integer;
       const OldValue: string; var NewValue: String);
+    procedure loadButtonClick(Sender: TObject);
     procedure matrixSizeInputChange(Sender: TObject);
     procedure PrimAlgorithmButtonClick(Sender: TObject);
+    procedure saveButtonClick(Sender: TObject);
     procedure symmetryCheckBoxChange(Sender: TObject);
 
     procedure refreshGrid;
@@ -42,6 +48,8 @@ type
     second: Integer;
     weight: Integer;
   end;
+
+  TStringArray = array of String;
 
   TMatrix = array of array of Integer;
   TVertexList = array of Integer;
@@ -56,6 +64,8 @@ const
   Unset = 0;
   Unconnected = -1;
   Connected = 1;
+
+  FileSeparator = ',';
 
 implementation
 
@@ -393,6 +403,7 @@ begin
   result := e_used;
 end;
 
+
 {$R *.lfm}
 
 { executed on form creation }
@@ -458,14 +469,16 @@ end;
 { Handle change of matrix size matrixSizeInput value }
 procedure TAppForm.matrixSizeInputChange(Sender: TObject);
 var
-  i: Integer;
+  size: Integer;
 begin
-  //adapt size of grid
-  grid.RowCount := matrixSizeInput.Value + 1;
-  grid.ColCount := matrixSizeInput.Value + 1;
+  size := matrixSizeInput.value;
 
-  //adapt size of matrix
-  setLength(matrix, matrixSizeInput.Value, matrixSizeInput.Value);
+  //set size of matrix
+  setLength(matrix, size, size);
+
+  //adapt size of grid
+  grid.RowCount := size + 1;
+  grid.ColCount := size + 1;
 
   //fill new values and refresh UI
   fillMatrix(matrix);
@@ -519,6 +532,99 @@ begin
   clearMatrix(matrix);
   applyEdgesToMatrix(matrix, edges);
   refreshGrid;
+end;
+
+function split(s: string; delimiter: char): TStringArray;
+var
+  i: Integer;
+  stringlist: TStringList;
+begin
+  stringlist := TStringList.create;
+
+  try
+    stringlist.delimiter := delimiter;
+    stringlist.DelimitedText := s;
+
+    setLength(result, stringlist.Count);
+    for i := 0 to high(result) do
+      result[i] := stringlist.ValueFromIndex[i];
+  finally
+    stringlist.free;
+  end;
+end;
+
+procedure TAppForm.loadButtonClick(Sender: TObject);
+var
+  x, y: Integer;
+  line: String;
+  meta, row: TStringArray;
+  stringlist: TStringList;
+begin
+  if openDialog.Execute then
+  begin
+    stringlist := TStringList.create;
+    stringlist.loadFromFile(openDialog.FileName);
+
+    //meta
+    meta := split(stringlist.ValueFromIndex[0], FileSeparator);
+
+    matrixSizeInput.value := StrToInt(meta[0]);
+    matrixSizeInputChange(Sender);
+
+    symmetryCheckBox.Checked := StrToBool(meta[1]);
+    weightedCheckBox.Checked := StrToBool(meta[2]);
+
+    //data
+    for y := 0 to high(matrix) do
+    begin
+      line := stringlist.ValueFromIndex[y + 1];
+      row := split(line, FileSeparator);
+      for x := 0 to high(matrix) do
+        matrix[x, y] := StrToInt(row[x]);
+    end;
+
+    refreshGrid;
+  end;
+end;
+
+procedure TAppForm.saveButtonClick(Sender: TObject);
+var
+  x, y: Integer;
+  line: String;
+  stringlist: TStringList;
+begin
+  stringlist := TStringList.create;
+
+  //convert matrix to stringlist
+  //meta info
+  line := IntToStr(length(matrix)) + FileSeparator + BoolToStr(symmetric) +
+    FileSeparator + BoolToStr(weighted);
+  stringlist.append(line);
+
+  //data
+  for y := 0 to high(matrix) do
+  begin
+    line := '';
+    for x := 0 to high(matrix) do
+    begin
+      line += IntToStr(matrix[x, y]);
+      if x < high(matrix) then
+        line += FileSeparator;
+    end;
+
+    stringlist.add(line);
+  end;
+
+  //request file path
+  if saveDialog.Execute then
+  begin
+    //save
+    try
+      stringlist.saveToFile(saveDialog.fileName);
+    finally
+      stringlist.free;
+    end;
+  end;
 end;
 
 { Perform depth-first serach on adjacency matrix }
