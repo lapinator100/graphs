@@ -1,17 +1,17 @@
 object AppForm: TAppForm
-  Left = 444
-  Height = 451
-  Top = 166
+  Left = 351
+  Height = 447
+  Top = 127
   Width = 501
   Caption = 'Graphen'
-  ClientHeight = 451
+  ClientHeight = 447
   ClientWidth = 501
   OnCreate = FormCreate
   Position = poDesktopCenter
   LCLVersion = '1.6.0.4'
   object grid: TStringGrid
     Left = 8
-    Height = 388
+    Height = 384
     Top = 56
     Width = 486
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -24,7 +24,7 @@ object AppForm: TAppForm
     Font.Name = 'Myriad Condensed Web'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goSmoothScroll]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goAlwaysShowEditor, goSmoothScroll]
     ParentFont = False
     RowCount = 3
     TabOrder = 0
@@ -34,6 +34,7 @@ object AppForm: TAppForm
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft
     OnSelectCell = gridSelectCell
+    OnValidateEntry = gridValidateEntry
   end
   object matrixSizeInput: TSpinEdit
     Left = 8
@@ -93,5 +94,14 @@ object AppForm: TAppForm
     Anchors = [akTop, akRight]
     Caption = 'Prim'
     TabOrder = 6
+  end
+  object weightedCheckBox: TCheckBox
+    Left = 96
+    Height = 21
+    Top = 31
+    Width = 81
+    Caption = 'gewichtet'
+    OnChange = weightedCheckBoxChange
+    TabOrder = 7
   end
 end

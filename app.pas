@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Grids, Spin,
-  StdCtrls;
+  StdCtrls, Types;
 
 type
 
@@ -16,6 +16,7 @@ type
     breadthFirstSearchButton: TButton;
     Button1: TButton;
     Button2: TButton;
+    weightedCheckBox: TCheckBox;
     symmetryCheckBox: TCheckBox;
     depthFirstSearchButton: TButton;
     matrixSizeInput: TSpinEdit;
@@ -24,11 +25,15 @@ type
     procedure breadthFirstSearchButtonClick(Sender: TObject);
     procedure depthFirstSearchButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure gridEditingDone(Sender: TObject);
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
+    procedure gridValidateEntry(sender: TObject; aCol, aRow: Integer;
+      const OldValue: string; var NewValue: String);
     procedure matrixSizeInputChange(Sender: TObject);
     procedure symmetryCheckBoxChange(Sender: TObject);
 
     procedure refreshGrid;
+    procedure weightedCheckBoxChange(Sender: TObject);
   end;
 
   TEdge = record
@@ -43,11 +48,12 @@ type
 var
   AppForm: TAppForm;
   matrix: TMatrix;
+  weighted, symmetric: boolean;
 
 const
   Unset = 0;
-  Unconnected = 1;
-  Connected = 2;
+  Unconnected = -1;
+  Connected = 1;
 
 implementation
 
@@ -234,11 +240,32 @@ procedure TAppForm.FormCreate(Sender: TObject);
 begin
   //emulate change of adjacency matrix's size for initialization
   matrixSizeInputChange(Sender);
+
+  //initialize symmetry and weighted bools
+  symmetric := symmetryCheckBox.checked;
+  weighted := weightedCheckBox.checked;
+end;
+
+procedure TAppForm.gridEditingDone(Sender: TObject);
+begin
+
+end;
+
+{ Change matrix data when edited (Only weighted graphs) }
+procedure TAppForm.gridValidateEntry(sender: TObject; aCol, aRow: Integer;
+  const OldValue: string; var NewValue: String);
+begin
+  if not (acol = arow) then
+    matrix[aCol - 1, aRow - 1] := StrToInt(NewValue);
 end;
 
 { Handle cell selection in grid }
 procedure TAppForm.gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
 begin
+  //don't do anything if matrix is weighted
+  if weighted then
+    exit;
+
   CanSelect := True;
 
   //make sure a valid position was selected
@@ -254,7 +281,7 @@ begin
   begin
     matrix[aCol - 1, aRow - 1] := Unconnected;
 
-    if symmetryCheckBox.checked then
+    if symmetric then
       matrix[aRow - 1, aCol - 1] := Unconnected;
   end
   else
@@ -322,11 +349,46 @@ begin
     for y := 0 to length(matrix[x]) - 1 do
       //make sure coordinates are inside bounds of grid
       if (x < grid.ColCount - 1) and (y < grid.RowCount - 1) then
-        //display '0' for unconnected and '1' for connected vertexes
-        if matrix[x, y] = Unconnected then
-          grid.Cells[x + 1, y + 1] := '0'
+        //grid.Cells[x + 1, y + 1] := IntToStr(matrix[x, y]);exit;               //testing
+        //display '∞' for unconnected and else the element's value if weighted
+        if weighted then
+          if matrix[x, y] = Unconnected then
+            grid.Cells[x + 1, y + 1] := '∞'
+          else
+            grid.Cells[x + 1, y + 1] := IntToStr(matrix[x, y])
         else
-          grid.Cells[x + 1, y + 1] := '1';
+        //display '0' for unconnected and '1' for connected if matrix is not weighted
+          if matrix[x, y] = Unconnected then
+            grid.Cells[x + 1, y + 1] := '0'
+          else if matrix[x, y] = Connected then
+            grid.Cells[x + 1, y + 1] := '1'
+end;
+
+{ Enable or Disable Editing according to weightedCheckBox }
+procedure TAppForm.weightedCheckBoxChange(Sender: TObject);
+var
+  i: Integer;
+begin
+  if weightedCheckBox.checked then
+  begin
+    weighted := true;
+
+    for i := 0 to length(matrix) - 1 do
+      matrix[i, i] := Unconnected;
+
+    grid.Options := grid.Options + [goEditing]
+  end
+  else
+  begin
+    weighted := false;
+
+    for i := 0 to length(matrix) - 1 do
+      matrix[i, i] := Unconnected;
+
+    grid.Options := grid.Options - [goEditing];
+  end;
+
+  refreshGrid;
 end;
 
 { Mirror adjacency matrix if checkbox is checked }
@@ -336,6 +398,8 @@ var
 begin
   if symmetryCheckBox.checked then
   begin
+    symmetric := true;
+
     //loop through matrix
     for x := 0 to length(matrix) - 1 do
       for y := (x + 1) to length(matrix[x]) - 1 do
@@ -343,7 +407,9 @@ begin
         matrix[x, y] := matrix[y, x];
 
     refreshGrid;
-  end;
+  end
+  else
+    symmetric := false;
 end;
 
 end.
