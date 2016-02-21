@@ -91,8 +91,16 @@ begin
   //loop through edges and set both directions for adjacency matrix as connected
   for i := 0 to length(edges) - 1 do
   begin
-    matrix[edges[i].first][edges[i].second] := Connected;
-    matrix[edges[i].second][edges[i].first] := Connected;
+    if weighted then
+    begin
+      matrix[edges[i].first][edges[i].second] := edges[i].weight;
+      matrix[edges[i].second][edges[i].first] := edges[i].weight;
+    end
+    else
+    begin
+      matrix[edges[i].first][edges[i].second] := Connected;
+      matrix[edges[i].second][edges[i].first] := Connected;
+    end;
   end;
 end;
 
@@ -234,6 +242,14 @@ begin
   result := edges;
 end;
 
+{ return edge (convenience function }
+function createEdge(first, second, weight: Integer): TEdge;
+begin
+  result.first := first;
+  result.second := second;
+  result.weight := weight;
+end;
+
 { convert weighted matrix to list of weighted edges  }
 function matrixToEdges(matrix: TMatrix): TEdgeList;
 var
@@ -247,9 +263,7 @@ begin
       if not matrix[x, y] = Unconnected then
       begin
         setLength(edges, length(edges) + 1);
-        edges[length(edges) - 1].first := x;
-        edges[length(edges) - 1].second := y;
-        edges[length(edges) - 1].weight := matrix[x, y];
+        edges[length(edges) - 1] := createEdge(x, y, matrix[x, y]);
       end;
 
   result := edges;
@@ -266,7 +280,7 @@ begin
   begin
     done := True;
 
-    for i := 0 to length(edges) - 1 do
+    for i := 0 to length(edges) - 2 do
     begin
       if ((edges[i].weight > edges[i + 1].weight) and ascending) or
         ((edges[i].weight < edges[i + 1].weight) and (not ascending)) then
@@ -274,11 +288,14 @@ begin
         temp := edges[i];
         edges[i] := edges[i + 1];
         edges[i + 1] := temp;
+
         done := False;
       end;
     end;
   end;
   until done;
+
+  result := edges;
 end;
 
 function circleExisting(edges: TEdgeList): Boolean;
@@ -308,76 +325,72 @@ begin
   result := e0;
 end;
 
-function createEdge(first, second, weight: Integer): TEdge;
-begin
-  result.first := first;
-  result.second := second;
-  result.weight := weight;
-end;
-
 function primAlgorithm(matrix: TMatrix): TEdgeList;
 var
-  i, j, x, y: Integer;
+  i, j: Integer;
   edge: TEdge;
   v_done, v_pending: TVertexList;
   e_used, e_neighbours: TEdgeList;
 begin
   //create initial lists
   setLength(e_used, 0);
-  setLength(e_neighbours, 0);
 
+  //fill v_done
   setLength(v_done, 1);
+  v_done[0] := 0;
+
+  //fill v_pending
   setLength(v_pending, length(matrix) - 1);
-
-  for i := 0 to length(matrix) - 1 do
+  for i := 0 to length(matrix) - 2 do
   begin
-    if i = 0 then
-      v_done[i] := i
-    else
-      v_pending[i - 1] := i;
+    v_pending[i] := i + 1;
   end;
-
-  // step 2
 
   repeat
   begin
+    //deplete list of neighbour edges
+    setLength(e_neighbours, 0);
+
     //list all neighbour vertices
-    for x := 0 to length(v_done) - 1 do
-      for y := 0 to length(v_pending) - 1 do
+    for i := 0 to length(v_done) - 1 do
+      for j := 0 to length(v_pending) - 1 do
       begin
-        if matrix[x, y] <> Unconnected then
+        //add connected neighbours to list
+        if matrix[v_done[i], v_pending[j]] <> Unconnected then
         begin
-          setlength(e_neighbours, length(e_neighbours) + 2);
-          e_neighbours[high(e_neighbours)] := createEdge(x, y, matrix[x, y]);
+          setlength(e_neighbours, length(e_neighbours) + 1);
+          e_neighbours[high(e_neighbours)] := createEdge(v_done[i],
+            v_pending[j], matrix[v_done[i], v_pending[j]]);
         end;
       end;
 
     //sort neighbour edges descending
     e_neighbours := sortEdges(e_neighbours, false);
 
-    {//remove unconnected edges
-    while e_neighbours[high(e_neighbours)].weight = Unconnected do
-      setLength(e_neighbours, length(e_neighbours) - 1);}
-
     //take neighbour edge with smallest weight and add it to output
     edge := e_neighbours[high(e_neighbours)];
-    //append edge
+
+    //append new edge
     setlength(e_used, length(e_used) + 1);
     e_used[high(e_used)] := edge;
 
+    //append new vertex
     setLength(v_done, length(v_done) + 1);
     v_done[high(v_done)] := edge.second;
 
-    //remove y from v_pending
+    //remove added vertex from pending list
     for i := 0 to length(v_pending) - 1 do
       if v_pending[i] = edge.second then
       begin
         for j := 0 to high(v_pending) - i - 1 do
           v_pending[i + j] := v_pending[i + j + 1];
-        setLength(v_pending, length(v_pending) - 1);
+        break;
       end;
+    setLength(v_pending, length(v_pending) - 1);
   end;
   until length(v_done) >= length(matrix);
+
+  result := e_used;
 end;
 
 {$R *.lfm}
