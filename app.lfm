@@ -1,7 +1,7 @@
 object AppForm: TAppForm
-  Left = 585
+  Left = 312
   Height = 448
-  Top = 624
+  Top = 164
   Width = 501
   Caption = 'Graphen'
   ClientHeight = 448
@@ -36,9 +36,9 @@ object AppForm: TAppForm
     OnSelectCell = gridSelectCell
   end
   object matrixSizeInput: TSpinEdit
-    Left = 10
-    Height = 16
-    Top = 11
+    Left = 8
+    Height = 27
+    Top = 8
     Width = 80
     MinValue = 2
     OnChange = matrixSizeInputChange
@@ -46,7 +46,7 @@ object AppForm: TAppForm
     Value = 2
   end
   object breadthFirstSearchButton: TButton
-    Left = 272
+    Left = 280
     Height = 21
     Top = 8
     Width = 107
@@ -64,5 +64,16 @@ object AppForm: TAppForm
     Caption = 'Tiefensuche'
     OnClick = depthFirstSearchButtonClick
     TabOrder = 3
+  end
+  object symmetryCheckBox: TCheckBox
+    Left = 88
+    Height = 21
+    Top = 8
+    Width = 88
+    Caption = 'Symmetrie'
+    Checked = True
+    OnChange = symmetryCheckBoxChange
+    State = cbChecked
+    TabOrder = 4
   end
 end

@@ -14,6 +14,7 @@ type
 
   TAppForm = class(TForm)
     breadthFirstSearchButton: TButton;
+    symmetryCheckBox: TCheckBox;
     depthFirstSearchButton: TButton;
     matrixSizeInput: TSpinEdit;
     grid: TStringGrid;
@@ -25,11 +26,7 @@ type
     procedure matrixSizeInputChange(Sender: TObject);
 
     procedure refreshGrid;
-  private
-  private
-    { private declarations }
-  public
-    { public declarations }
+    procedure symmetryCheckBoxChange(Sender: TObject);
   end;
 
   TEdge = record
@@ -38,19 +35,19 @@ type
   end;
 
   TVertexState = (Unset=0, Unconnected=1, Connected=2);
-  TAdjacencyMatrix = array of array of TVertexState;
+  Tmatrix = array of array of TVertexState;
   TVertexList = array of Integer;
   TEdgeList = array of TEdge;
 
 var
   AppForm: TAppForm;
-  adjacencyMatrix: TAdjacencyMatrix;
+  matrix: Tmatrix;
 
 implementation
 
 
 { Set all vertexes in matrix given to unconnected }
-procedure clearMatrix(var matrix: TAdjacencyMatrix);
+procedure clearMatrix(var matrix: Tmatrix);
 var
   x, y: Integer;
 begin
@@ -61,7 +58,7 @@ begin
 end;
 
 { Fill matrix given by settings all unset vertexes to unconnected }
-procedure fillMatrix(var matrix: TAdjacencyMatrix);
+procedure fillMatrix(var matrix: Tmatrix);
 var
   x, y: Integer;
 begin
@@ -73,7 +70,7 @@ begin
 end;
 
 { Add edges to matrix given }
-procedure applyEdgesToMatrix(var matrix: TAdjacencyMatrix; edges: TEdgeList);
+procedure applyEdgesToMatrix(var matrix: Tmatrix; edges: TEdgeList);
 var
   i: Integer;
 begin
@@ -107,7 +104,7 @@ end;
   Return first neighbour vertex for given vertex that is not in the
   to-be-exluded list. If no neighbour was found, return -1.
 }
-function getNextNeighbourVertex(matrix: TAdjacencyMatrix; vertex: Integer;
+function getNextNeighbourVertex(matrix: Tmatrix; vertex: Integer;
   exludeVertexes: TVertexList): Integer;
 var
   y: Integer;
@@ -128,7 +125,7 @@ end;
 
   Return list of edges being a spanning tree.
 }
-function breadthFirstSearch(matrix: TAdjacencyMatrix): TEdgeList;
+function breadthFirstSearch(matrix: Tmatrix): TEdgeList;
 var
   currentVertex, nextNeighbourVertex: Integer;
   activeVertexes, processedVertexes: TVertexList;
@@ -178,7 +175,7 @@ end;
 
   Return list of edges being a spanning tree.
 }
-function depthFirstSearch(matrix: TAdjacencyMatrix): TEdgeList;
+function depthFirstSearch(matrix: Tmatrix): TEdgeList;
 var
   currentVertex, nextNeighbourVertex: Integer;
   activeVertexes, processedVertexes: TVertexList;
@@ -247,15 +244,19 @@ begin
     exit;
 
   //change vertex state based on its current state
-  if adjacencyMatrix[aCol - 1, aRow - 1] = Connected then
+  if matrix[aCol - 1, aRow - 1] = Connected then
   begin
-    adjacencyMatrix[aCol - 1, aRow - 1] := Unconnected;
-    adjacencyMatrix[aRow - 1, aCol - 1] := Unconnected;
+    matrix[aCol - 1, aRow - 1] := Unconnected;
+
+    if symmetryCheckBox.checked then
+      matrix[aRow - 1, aCol - 1] := Unconnected;
   end
   else
   begin
-    adjacencyMatrix[aCol - 1, aRow - 1] := Connected;
-    adjacencyMatrix[aRow - 1, aCol - 1] := Connected;
+    matrix[aCol - 1, aRow - 1] := Connected;
+
+    if symmetryCheckBox.checked then
+      matrix[aRow - 1, aCol - 1] := Connected;
   end;
 
   refreshGrid;
@@ -271,13 +272,13 @@ begin
   grid.ColCount := matrixSizeInput.Value + 1;
 
   //adapt size of matrix
-  setLength(adjacencyMatrix, matrixSizeInput.Value);
+  setLength(matrix, matrixSizeInput.Value);
 
-  for i := 0 to length(adjacencyMatrix) - 1 do
-    setLength(adjacencyMatrix[i], matrixSizeInput.Value);
+  for i := 0 to length(matrix) - 1 do
+    setLength(matrix[i], matrixSizeInput.Value);
 
   //fill new values and refresh UI
-  fillMatrix(adjacencyMatrix);
+  fillMatrix(matrix);
   refreshGrid;
 end;
 
@@ -285,11 +286,11 @@ end;
 procedure TAppForm.breadthFirstSearchButtonClick(Sender: TObject);
 var edges: TEdgeList;
 begin
-  edges := breadthFirstSearch(adjacencyMatrix);
+  edges := breadthFirstSearch(matrix);
 
   //reset current matrix, add edges, and resfresh UI
-  clearMatrix(adjacencyMatrix);
-  applyEdgesToMatrix(adjacencyMatrix, edges);
+  clearMatrix(matrix);
+  applyEdgesToMatrix(matrix, edges);
   refreshGrid;
 end;
 
@@ -297,11 +298,11 @@ end;
 procedure TAppForm.depthFirstSearchButtonClick(Sender: TObject);
 var edges: TEdgeList;
 begin
-  edges := depthFirstSearch(adjacencyMatrix);
+  edges := depthFirstSearch(matrix);
 
   //reset current matrix, add edges, and resfresh UI
-  clearMatrix(adjacencyMatrix);
-  applyEdgesToMatrix(adjacencyMatrix, edges);
+  clearMatrix(matrix);
+  applyEdgesToMatrix(matrix, edges);
   refreshGrid;
 end;
 
@@ -311,15 +312,30 @@ var
   x, y: Integer;
 begin
   //loop through matrix
-  for x := 0 to length(adjacencyMatrix) - 1 do
-    for y := 0 to length(adjacencyMatrix[x]) - 1 do
-      // make sure coordinates are inside bounds of grid
+  for x := 0 to length(matrix) - 1 do
+    for y := 0 to length(matrix[x]) - 1 do
+      //make sure coordinates are inside bounds of grid
       if (x < grid.ColCount - 1) and (y < grid.RowCount - 1) then
         //display '0' for unconnected and '1' for connected vertexes
-        if adjacencyMatrix[x, y] = Unconnected then
+        if matrix[x, y] = Unconnected then
           grid.Cells[x + 1, y + 1] := '0'
         else
           grid.Cells[x + 1, y + 1] := '1';
+end;
+
+procedure TAppForm.symmetryCheckBoxChange(Sender: TObject);
+var
+  x, y: Integer;
+begin
+  if symmetryCheckBox.checked then
+  begin
+    for x := 0 to length(matrix) - 1 do
+      for y := (x + 1) to length(matrix[x]) - 1 do
+        if matrix[x, y] <> matrix[y, x] then
+          matrix[x, y] := matrix[y, x];
+
+    refreshGrid;
+  end;
 end;
 
 end.
