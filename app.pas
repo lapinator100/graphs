@@ -345,16 +345,12 @@ begin
     for x := 0 to length(v_done) - 1 do
       for y := 0 to length(v_pending) - 1 do
       begin
-        showmessage(inttostr(matrix[x, y]));
         if matrix[x, y] <> Unconnected then
         begin
-          showmessage('test');
           setlength(e_neighbours, length(e_neighbours) + 2);
           e_neighbours[high(e_neighbours)] := createEdge(x, y, matrix[x, y]);
         end;
       end;
-
-    showmessage(inttostr(length(e_neighbours)));
 
     //sort neighbour edges descending
     e_neighbours := sortEdges(e_neighbours, false);
