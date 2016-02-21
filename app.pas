@@ -35,19 +35,19 @@ type
   end;
 
   TVertexState = (Unset=0, Unconnected=1, Connected=2);
-  Tmatrix = array of array of TVertexState;
+  TMatrix = array of array of TVertexState;
   TVertexList = array of Integer;
   TEdgeList = array of TEdge;
 
 var
   AppForm: TAppForm;
-  matrix: Tmatrix;
+  matrix: TMatrix;
 
 implementation
 
 
 { Set all vertexes in matrix given to unconnected }
-procedure clearMatrix(var matrix: Tmatrix);
+procedure clearMatrix(var matrix: TMatrix);
 var
   x, y: Integer;
 begin
@@ -58,7 +58,7 @@ begin
 end;
 
 { Fill matrix given by settings all unset vertexes to unconnected }
-procedure fillMatrix(var matrix: Tmatrix);
+procedure fillMatrix(var matrix: TMatrix);
 var
   x, y: Integer;
 begin
@@ -70,7 +70,7 @@ begin
 end;
 
 { Add edges to matrix given }
-procedure applyEdgesToMatrix(var matrix: Tmatrix; edges: TEdgeList);
+procedure applyEdgesToMatrix(var matrix: TMatrix; edges: TEdgeList);
 var
   i: Integer;
 begin
@@ -104,7 +104,7 @@ end;
   Return first neighbour vertex for given vertex that is not in the
   to-be-exluded list. If no neighbour was found, return -1.
 }
-function getNextNeighbourVertex(matrix: Tmatrix; vertex: Integer;
+function getNextNeighbourVertex(matrix: TMatrix; vertex: Integer;
   exludeVertexes: TVertexList): Integer;
 var
   y: Integer;
@@ -125,7 +125,7 @@ end;
 
   Return list of edges being a spanning tree.
 }
-function breadthFirstSearch(matrix: Tmatrix): TEdgeList;
+function breadthFirstSearch(matrix: TMatrix): TEdgeList;
 var
   currentVertex, nextNeighbourVertex: Integer;
   activeVertexes, processedVertexes: TVertexList;
@@ -175,7 +175,7 @@ end;
 
   Return list of edges being a spanning tree.
 }
-function depthFirstSearch(matrix: Tmatrix): TEdgeList;
+function depthFirstSearch(matrix: TMatrix): TEdgeList;
 var
   currentVertex, nextNeighbourVertex: Integer;
   activeVertexes, processedVertexes: TVertexList;
