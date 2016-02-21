@@ -1,7 +1,7 @@
 object AppForm: TAppForm
-  Left = 312
+  Left = 673
   Height = 448
-  Top = 164
+  Top = 392
   Width = 501
   Caption = 'Graphen'
   ClientHeight = 448
@@ -37,7 +37,7 @@ object AppForm: TAppForm
   end
   object matrixSizeInput: TSpinEdit
     Left = 8
-    Height = 27
+    Height = 16
     Top = 8
     Width = 80
     MinValue = 2
@@ -66,10 +66,10 @@ object AppForm: TAppForm
     TabOrder = 3
   end
   object symmetryCheckBox: TCheckBox
-    Left = 88
-    Height = 21
+    Left = 96
+    Height = 18
     Top = 8
-    Width = 88
+    Width = 86
     Caption = 'Symmetrie'
     Checked = True
     OnChange = symmetryCheckBoxChange

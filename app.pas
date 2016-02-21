@@ -24,9 +24,9 @@ type
     procedure FormCreate(Sender: TObject);
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
     procedure matrixSizeInputChange(Sender: TObject);
+    procedure symmetryCheckBoxChange(Sender: TObject);
 
     procedure refreshGrid;
-    procedure symmetryCheckBoxChange(Sender: TObject);
   end;
 
   TEdge = record
@@ -323,16 +323,18 @@ begin
           grid.Cells[x + 1, y + 1] := '1';
 end;
 
+{ Mirror adjacency matrix if checkbox is checked }
 procedure TAppForm.symmetryCheckBoxChange(Sender: TObject);
 var
   x, y: Integer;
 begin
   if symmetryCheckBox.checked then
   begin
+    //loop through matrix
     for x := 0 to length(matrix) - 1 do
       for y := (x + 1) to length(matrix[x]) - 1 do
-        if matrix[x, y] <> matrix[y, x] then
-          matrix[x, y] := matrix[y, x];
+        //mirror values from upper half to lower half
+        matrix[x, y] := matrix[y, x];
 
     refreshGrid;
   end;
