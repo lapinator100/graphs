@@ -14,8 +14,8 @@ type
 
   TAppForm = class(TForm)
     breadthFirstSearchButton: TButton;
-    Button1: TButton;
-    Button2: TButton;
+    kruskalAlgorithmButton: TButton;
+    PrimAlgorithmButton: TButton;
     weightedCheckBox: TCheckBox;
     symmetryCheckBox: TCheckBox;
     depthFirstSearchButton: TButton;
@@ -23,13 +23,14 @@ type
     grid: TStringGrid;
 
     procedure breadthFirstSearchButtonClick(Sender: TObject);
+    procedure kruskalAlgorithmButtonClick(Sender: TObject);
     procedure depthFirstSearchButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure gridEditingDone(Sender: TObject);
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
     procedure gridValidateEntry(sender: TObject; aCol, aRow: Integer;
       const OldValue: string; var NewValue: String);
     procedure matrixSizeInputChange(Sender: TObject);
+    procedure PrimAlgorithmButtonClick(Sender: TObject);
     procedure symmetryCheckBoxChange(Sender: TObject);
 
     procedure refreshGrid;
@@ -39,6 +40,7 @@ type
   TEdge = record
     first: Integer;
     second: Integer;
+    weight: Integer;
   end;
 
   TMatrix = array of array of Integer;
@@ -94,7 +96,7 @@ begin
   end;
 end;
 
-{ Test wether a certain vertex is contained in list for vertexes given }
+{ Test wether a certain vertex is contained in list for vertices given }
 function isVertexInList(vertex: Integer; vertexList: TVertexList): Boolean;
 var
   i: Integer;
@@ -232,6 +234,155 @@ begin
   result := edges;
 end;
 
+{ convert weighted matrix to list of weighted edges  }
+function matrixToEdges(matrix: TMatrix): TEdgeList;
+var
+  x, y: Integer;
+  edges: TEdgeList;
+begin
+  setLength(edges, 0);
+
+  for x := 0 to length(matrix) - 1 do
+    for y := 0 to length(matrix) - 1 do
+      if not matrix[x, y] = Unconnected then
+      begin
+        setLength(edges, length(edges) + 1);
+        edges[length(edges) - 1].first := x;
+        edges[length(edges) - 1].second := y;
+        edges[length(edges) - 1].weight := matrix[x, y];
+      end;
+
+  result := edges;
+end;
+
+{ sort edges by weight ascending or descending (bubble sort) }
+function sortEdges(edges: TEdgeList; ascending: Boolean): TEdgeList;
+var
+  i: Integer;
+  temp: TEdge;
+  done: Boolean;
+begin
+  repeat
+  begin
+    done := True;
+
+    for i := 0 to length(edges) - 1 do
+    begin
+      if ((edges[i].weight > edges[i + 1].weight) and ascending) or
+        ((edges[i].weight < edges[i + 1].weight) and (not ascending)) then
+      begin
+        temp := edges[i];
+        edges[i] := edges[i + 1];
+        edges[i + 1] := temp;
+        done := False;
+      end;
+    end;
+  end;
+  until done;
+end;
+
+function circleExisting(edges: TEdgeList): Boolean;
+begin
+  result := False; //dummy, modified depth-first search to be applied
+end;
+
+function kruskalAlgorithm(matrix: TMatrix): TEdgeList;
+var
+  i: Integer;
+  e: TEdge;
+  e0, e1: TEdgeList;
+begin
+  e1 := matrixToEdges(matrix);
+  e1 := sortEdges(e1, true);
+
+  //loop edges from lowest to highest
+  for i := 0 to length(e1) - 1 do
+    //add next edge
+    setLength(e0, length(e0) + 1);
+    e0[high(e0)] := e1[i];
+
+    //remove edge if circle existing
+    if circleExisting(e0) then
+      setLength(e0, length(e0) - 1);
+
+  result := e0;
+end;
+
+function createEdge(first, second, weight: Integer): TEdge;
+begin
+  result.first := first;
+  result.second := second;
+  result.weight := weight;
+end;
+
+function primAlgorithm(matrix: TMatrix): TEdgeList;
+var
+  i, j, x, y: Integer;
+  edge: TEdge;
+  v_done, v_pending: TVertexList;
+  e_used, e_neighbours: TEdgeList;
+begin
+  //create initial lists
+  setLength(e_used, 0);
+  setLength(e_neighbours, 0);
+
+  setLength(v_done, 1);
+  setLength(v_pending, length(matrix) - 1);
+
+  for i := 0 to length(matrix) - 1 do
+  begin
+    if i = 0 then
+      v_done[i] := i
+    else
+      v_pending[i - 1] := i;
+  end;
+
+  // step 2
+
+  repeat
+  begin
+    //list all neighbour vertices
+    for x := 0 to length(v_done) - 1 do
+      for y := 0 to length(v_pending) - 1 do
+      begin
+        showmessage(inttostr(matrix[x, y]));
+        if matrix[x, y] <> Unconnected then
+        begin
+          showmessage('test');
+          setlength(e_neighbours, length(e_neighbours) + 2);
+          e_neighbours[high(e_neighbours)] := createEdge(x, y, matrix[x, y]);
+        end;
+      end;
+
+    showmessage(inttostr(length(e_neighbours)));
+
+    //sort neighbour edges descending
+    e_neighbours := sortEdges(e_neighbours, false);
+
+    {//remove unconnected edges
+    while e_neighbours[high(e_neighbours)].weight = Unconnected do
+      setLength(e_neighbours, length(e_neighbours) - 1);}
+
+    //take neighbour edge with smallest weight and add it to output
+    edge := e_neighbours[high(e_neighbours)];
+    //append edge
+    setlength(e_used, length(e_used) + 1);
+    e_used[high(e_used)] := edge;
+
+    setLength(v_done, length(v_done) + 1);
+    v_done[high(v_done)] := edge.second;
+
+    //remove y from v_pending
+    for i := 0 to length(v_pending) - 1 do
+      if v_pending[i] = edge.second then
+      begin
+        for j := 0 to high(v_pending) - i - 1 do
+          v_pending[i + j] := v_pending[i + j + 1];
+        setLength(v_pending, length(v_pending) - 1);
+      end;
+  end;
+  until length(v_done) >= length(matrix);
+end;
 
 {$R *.lfm}
 
@@ -246,17 +397,17 @@ begin
   weighted := weightedCheckBox.checked;
 end;
 
-procedure TAppForm.gridEditingDone(Sender: TObject);
-begin
-
-end;
-
 { Change matrix data when edited (Only weighted graphs) }
 procedure TAppForm.gridValidateEntry(sender: TObject; aCol, aRow: Integer;
   const OldValue: string; var NewValue: String);
 begin
   if not (acol = arow) then
-    matrix[aCol - 1, aRow - 1] := StrToInt(NewValue);
+    if (NewValue = '-') or (NewValue = '∞') then
+      matrix[aCol - 1, aRow - 1] := Unconnected
+    else
+      matrix[aCol - 1, aRow - 1] := StrToInt(NewValue);
+
+  refreshGrid;
 end;
 
 { Handle cell selection in grid }
@@ -305,10 +456,7 @@ begin
   grid.ColCount := matrixSizeInput.Value + 1;
 
   //adapt size of matrix
-  setLength(matrix, matrixSizeInput.Value);
-
-  for i := 0 to length(matrix) - 1 do
-    setLength(matrix[i], matrixSizeInput.Value);
+  setLength(matrix, matrixSizeInput.Value, matrixSizeInput.Value);
 
   //fill new values and refresh UI
   fillMatrix(matrix);
@@ -322,6 +470,43 @@ begin
   edges := breadthFirstSearch(matrix);
 
   //reset current matrix, add edges, and resfresh UI
+  clearMatrix(matrix);
+  applyEdgesToMatrix(matrix, edges);
+  refreshGrid;
+end;
+
+{ Perform Kruskal algorithm creating minimal spanning tree }
+procedure TAppForm.kruskalAlgorithmButtonClick(Sender: TObject);
+var
+  edges: TEdgeList;
+begin
+  if not weighted then
+  begin
+    showMessage('Der Kruskal-Algorithmus ist nur auf gewichtete Graphen anwendbar.');
+    exit;
+  end;
+
+  edges := kruskalAlgorithm(matrix);
+
+  //reset current matrix, add edges and refresh UI
+  clearMatrix(matrix);
+  applyEdgesToMatrix(matrix, edges);
+  refreshGrid;
+end;
+
+procedure TAppForm.PrimAlgorithmButtonClick(Sender: TObject);
+var
+  edges: TEdgeList;
+begin
+  if not weighted then
+  begin
+    showMessage('Der Prim-Algorithmus ist nur auf gewichtete Graphen anwendbar.');
+    exit;
+  end;
+
+  edges := primAlgorithm(matrix);
+
+  //reset current matrix, add edges and refresh UI
   clearMatrix(matrix);
   applyEdgesToMatrix(matrix, edges);
   refreshGrid;
@@ -349,7 +534,7 @@ begin
     for y := 0 to length(matrix[x]) - 1 do
       //make sure coordinates are inside bounds of grid
       if (x < grid.ColCount - 1) and (y < grid.RowCount - 1) then
-        //grid.Cells[x + 1, y + 1] := IntToStr(matrix[x, y]);exit;               //testing
+        //grid.Cells[x + 1, y + 1] := IntToStr(matrix[x, y]);exit;               //for testing
         //display '∞' for unconnected and else the element's value if weighted
         if weighted then
           if matrix[x, y] = Unconnected then

@@ -77,22 +77,24 @@ object AppForm: TAppForm
     State = cbChecked
     TabOrder = 4
   end
-  object Button1: TButton
+  object kruskalAlgorithmButton: TButton
     Left = 287
     Height = 20
     Top = 32
     Width = 100
     Anchors = [akTop, akRight]
     Caption = 'Kruskal'
+    OnClick = kruskalAlgorithmButtonClick
     TabOrder = 5
   end
-  object Button2: TButton
+  object PrimAlgorithmButton: TButton
     Left = 394
     Height = 20
     Top = 32
     Width = 100
     Anchors = [akTop, akRight]
     Caption = 'Prim'
+    OnClick = PrimAlgorithmButtonClick
     TabOrder = 6
   end
   object weightedCheckBox: TCheckBox
