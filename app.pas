@@ -14,6 +14,8 @@ type
 
   TAppForm = class(TForm)
     breadthFirstSearchButton: TButton;
+    Button1: TButton;
+    Button2: TButton;
     symmetryCheckBox: TCheckBox;
     depthFirstSearchButton: TButton;
     matrixSizeInput: TSpinEdit;
@@ -34,14 +36,18 @@ type
     second: Integer;
   end;
 
-  TVertexState = (Unset=0, Unconnected=1, Connected=2);
-  TMatrix = array of array of TVertexState;
+  TMatrix = array of array of Integer;
   TVertexList = array of Integer;
   TEdgeList = array of TEdge;
 
 var
   AppForm: TAppForm;
   matrix: TMatrix;
+
+const
+  Unset = 0;
+  Unconnected = 1;
+  Connected = 2;
 
 implementation
 

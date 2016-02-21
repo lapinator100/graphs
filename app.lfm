@@ -1,18 +1,18 @@
 object AppForm: TAppForm
-  Left = 673
-  Height = 448
-  Top = 392
+  Left = 444
+  Height = 451
+  Top = 166
   Width = 501
   Caption = 'Graphen'
-  ClientHeight = 448
+  ClientHeight = 451
   ClientWidth = 501
   OnCreate = FormCreate
   Position = poDesktopCenter
   LCLVersion = '1.6.0.4'
   object grid: TStringGrid
     Left = 8
-    Height = 403
-    Top = 40
+    Height = 388
+    Top = 56
     Width = 486
     Anchors = [akTop, akLeft, akRight, akBottom]
     ColCount = 3
@@ -37,7 +37,7 @@ object AppForm: TAppForm
   end
   object matrixSizeInput: TSpinEdit
     Left = 8
-    Height = 16
+    Height = 27
     Top = 8
     Width = 80
     MinValue = 2
@@ -46,20 +46,20 @@ object AppForm: TAppForm
     Value = 2
   end
   object breadthFirstSearchButton: TButton
-    Left = 280
-    Height = 21
+    Left = 287
+    Height = 20
     Top = 8
-    Width = 107
+    Width = 100
     Anchors = [akTop, akRight]
     Caption = 'Breitensuche'
     OnClick = breadthFirstSearchButtonClick
     TabOrder = 2
   end
   object depthFirstSearchButton: TButton
-    Left = 387
-    Height = 21
+    Left = 394
+    Height = 20
     Top = 8
-    Width = 107
+    Width = 100
     Anchors = [akTop, akRight]
     Caption = 'Tiefensuche'
     OnClick = depthFirstSearchButtonClick
@@ -67,13 +67,31 @@ object AppForm: TAppForm
   end
   object symmetryCheckBox: TCheckBox
     Left = 96
-    Height = 18
+    Height = 21
     Top = 8
-    Width = 86
+    Width = 88
     Caption = 'Symmetrie'
     Checked = True
     OnChange = symmetryCheckBoxChange
     State = cbChecked
     TabOrder = 4
+  end
+  object Button1: TButton
+    Left = 287
+    Height = 20
+    Top = 32
+    Width = 100
+    Anchors = [akTop, akRight]
+    Caption = 'Kruskal'
+    TabOrder = 5
+  end
+  object Button2: TButton
+    Left = 394
+    Height = 20
+    Top = 32
+    Width = 100
+    Anchors = [akTop, akRight]
+    Caption = 'Prim'
+    TabOrder = 6
   end
 end
