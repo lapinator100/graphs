@@ -1,20 +1,20 @@
 object AppForm: TAppForm
-  Left = 351
+  Left = 747
   Height = 447
-  Top = 127
-  Width = 501
+  Top = 213
+  Width = 546
   Caption = 'Graphen'
   ClientHeight = 447
-  ClientWidth = 501
+  ClientWidth = 546
   OnCreate = FormCreate
   Position = poDesktopCenter
   LCLVersion = '1.6.0.4'
   object grid: TStringGrid
-    Left = 8
-    Height = 384
-    Top = 56
-    Width = 486
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Left = 0
+    Height = 389
+    Top = 58
+    Width = 302
+    Align = alClient
     ColCount = 3
     DefaultColWidth = 25
     DefaultRowHeight = 25
@@ -36,104 +36,129 @@ object AppForm: TAppForm
     OnSelectCell = gridSelectCell
     OnValidateEntry = gridValidateEntry
   end
-  object matrixSizeInput: TSpinEdit
-    Left = 8
-    Height = 27
-    Top = 8
-    Width = 80
-    MinValue = 2
-    OnChange = matrixSizeInputChange
+  object Image1: TImage
+    Left = 307
+    Height = 389
+    Top = 58
+    Width = 239
+    Align = alRight
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 58
+    Top = 0
+    Width = 546
+    Align = alTop
+    ClientHeight = 58
+    ClientWidth = 546
     TabOrder = 1
-    Value = 2
+    object matrixSizeInput: TSpinEdit
+      Left = 8
+      Height = 16
+      Top = 10
+      Width = 80
+      MinValue = 2
+      OnChange = matrixSizeInputChange
+      TabOrder = 0
+      Value = 2
+    end
+    object symmetryCheckBox: TCheckBox
+      Left = 96
+      Height = 18
+      Top = 8
+      Width = 86
+      Caption = 'Symmetrie'
+      Checked = True
+      OnChange = symmetryCheckBoxChange
+      State = cbChecked
+      TabOrder = 1
+    end
+    object weightedCheckBox: TCheckBox
+      Left = 96
+      Height = 18
+      Top = 31
+      Width = 80
+      Caption = 'gewichtet'
+      OnChange = weightedCheckBoxChange
+      TabOrder = 2
+    end
+    object loadButton: TButton
+      Left = 248
+      Height = 20
+      Top = 8
+      Width = 83
+      Anchors = [akTop, akRight]
+      Caption = 'Laden'
+      OnClick = loadButtonClick
+      TabOrder = 3
+    end
+    object saveButton: TButton
+      Left = 248
+      Height = 20
+      Top = 32
+      Width = 83
+      Anchors = [akTop, akRight]
+      Caption = 'Speichern'
+      OnClick = saveButtonClick
+      TabOrder = 4
+    end
+    object kruskalAlgorithmButton: TButton
+      Left = 334
+      Height = 20
+      Top = 32
+      Width = 100
+      Anchors = [akTop, akRight]
+      Caption = 'Kruskal'
+      OnClick = kruskalAlgorithmButtonClick
+      TabOrder = 5
+    end
+    object breadthFirstSearchButton: TButton
+      Left = 439
+      Height = 20
+      Top = 8
+      Width = 100
+      Anchors = [akTop, akRight]
+      Caption = 'Breitensuche'
+      OnClick = breadthFirstSearchButtonClick
+      TabOrder = 6
+    end
+    object depthFirstSearchButton: TButton
+      Left = 334
+      Height = 20
+      Top = 8
+      Width = 100
+      Anchors = [akTop, akRight]
+      Caption = 'Tiefensuche'
+      OnClick = depthFirstSearchButtonClick
+      TabOrder = 7
+    end
+    object PrimAlgorithmButton: TButton
+      Left = 439
+      Height = 20
+      Top = 32
+      Width = 100
+      Anchors = [akTop, akRight]
+      Caption = 'Prim'
+      OnClick = PrimAlgorithmButtonClick
+      TabOrder = 8
+    end
   end
-  object breadthFirstSearchButton: TButton
-    Left = 288
-    Height = 20
-    Top = 9
-    Width = 100
-    Anchors = [akTop, akRight]
-    Caption = 'Breitensuche'
-    OnClick = breadthFirstSearchButtonClick
-    TabOrder = 2
-  end
-  object depthFirstSearchButton: TButton
-    Left = 394
-    Height = 20
-    Top = 8
-    Width = 100
-    Anchors = [akTop, akRight]
-    Caption = 'Tiefensuche'
-    OnClick = depthFirstSearchButtonClick
-    TabOrder = 3
-  end
-  object symmetryCheckBox: TCheckBox
-    Left = 96
-    Height = 21
-    Top = 8
-    Width = 88
-    Caption = 'Symmetrie'
-    Checked = True
-    OnChange = symmetryCheckBoxChange
-    State = cbChecked
-    TabOrder = 4
-  end
-  object kruskalAlgorithmButton: TButton
-    Left = 287
-    Height = 20
-    Top = 32
-    Width = 100
-    Anchors = [akTop, akRight]
-    Caption = 'Kruskal'
-    OnClick = kruskalAlgorithmButtonClick
-    TabOrder = 5
-  end
-  object PrimAlgorithmButton: TButton
-    Left = 394
-    Height = 20
-    Top = 32
-    Width = 100
-    Anchors = [akTop, akRight]
-    Caption = 'Prim'
-    OnClick = PrimAlgorithmButtonClick
-    TabOrder = 6
-  end
-  object weightedCheckBox: TCheckBox
-    Left = 96
-    Height = 21
-    Top = 31
-    Width = 81
-    Caption = 'gewichtet'
-    OnChange = weightedCheckBoxChange
-    TabOrder = 7
-  end
-  object loadButton: TButton
-    Left = 200
-    Height = 20
-    Top = 8
-    Width = 83
-    Anchors = [akTop, akRight]
-    Caption = 'laden'
-    OnClick = loadButtonClick
-    TabOrder = 8
-  end
-  object saveButton: TButton
-    Left = 200
-    Height = 20
-    Top = 32
-    Width = 83
-    Anchors = [akTop, akRight]
-    Caption = 'speichern'
-    OnClick = saveButtonClick
-    TabOrder = 9
+  object Splitter1: TSplitter
+    Left = 302
+    Height = 389
+    Top = 58
+    Width = 5
+    Align = alRight
+    ResizeAnchor = akRight
   end
   object saveDialog: TSaveDialog
     DefaultExt = '.admat'
-    left = 456
-    top = 408
+    left = 496
+    top = 392
   end
   object openDialog: TOpenDialog
     DefaultExt = '.admat'
-    left = 424
-    top = 408
+    left = 464
+    top = 392
   end
 end

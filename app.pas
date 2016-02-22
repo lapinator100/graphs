@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Grids, Spin,
-  StdCtrls, Types;
+  StdCtrls, ExtCtrls, Types;
 
 type
 
@@ -14,19 +14,23 @@ type
 
   TAppForm = class(TForm)
     breadthFirstSearchButton: TButton;
-    loadButton: TButton;
-    openDialog: TOpenDialog;
-    saveButton: TButton;
-    kruskalAlgorithmButton: TButton;
-    PrimAlgorithmButton: TButton;
-    saveDialog: TSaveDialog;
-    weightedCheckBox: TCheckBox;
-    symmetryCheckBox: TCheckBox;
     depthFirstSearchButton: TButton;
+    Image1: TImage;
+    kruskalAlgorithmButton: TButton;
+    loadButton: TButton;
     matrixSizeInput: TSpinEdit;
+    openDialog: TOpenDialog;
+    Panel1: TPanel;
+    PrimAlgorithmButton: TButton;
+    saveButton: TButton;
+    saveDialog: TSaveDialog;
     grid: TStringGrid;
+    Splitter1: TSplitter;
+    symmetryCheckBox: TCheckBox;
+    weightedCheckBox: TCheckBox;
 
     procedure breadthFirstSearchButtonClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
     procedure kruskalAlgorithmButtonClick(Sender: TObject);
     procedure depthFirstSearchButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -495,6 +499,10 @@ begin
   clearMatrix(matrix);
   applyEdgesToMatrix(matrix, edges);
   refreshGrid;
+end;
+
+procedure TAppForm.Button1Click(Sender: TObject);
+begin
 end;
 
 { Perform Kruskal algorithm creating minimal spanning tree }
