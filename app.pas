@@ -15,7 +15,7 @@ type
   TAppForm = class(TForm)
     breadthFirstSearchButton: TButton;
     depthFirstSearchButton: TButton;
-    Image1: TImage;
+    graph: TImage;
     kruskalAlgorithmButton: TButton;
     loadButton: TButton;
     matrixSizeInput: TSpinEdit;
@@ -25,12 +25,11 @@ type
     saveButton: TButton;
     saveDialog: TSaveDialog;
     grid: TStringGrid;
-    Splitter1: TSplitter;
+    splitter: TSplitter;
     symmetryCheckBox: TCheckBox;
     weightedCheckBox: TCheckBox;
 
     procedure breadthFirstSearchButtonClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure kruskalAlgorithmButtonClick(Sender: TObject);
     procedure depthFirstSearchButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -41,9 +40,11 @@ type
     procedure matrixSizeInputChange(Sender: TObject);
     procedure PrimAlgorithmButtonClick(Sender: TObject);
     procedure saveButtonClick(Sender: TObject);
+    procedure graphResize(Sender: TObject);
     procedure symmetryCheckBoxChange(Sender: TObject);
 
     procedure refreshGrid;
+    procedure refreshGraph;
     procedure weightedCheckBoxChange(Sender: TObject);
   end;
 
@@ -70,6 +71,7 @@ const
   Connected = 1;
 
   FileSeparator = ',';
+  VertexDiameter = 30;
 
 implementation
 
@@ -320,7 +322,6 @@ end;
 function kruskalAlgorithm(matrix: TMatrix): TEdgeList;
 var
   i: Integer;
-  e: TEdge;
   e0, e1: TEdgeList;
 begin
   e1 := matrixToEdges(matrix);
@@ -501,10 +502,6 @@ begin
   refreshGrid;
 end;
 
-procedure TAppForm.Button1Click(Sender: TObject);
-begin
-end;
-
 { Perform Kruskal algorithm creating minimal spanning tree }
 procedure TAppForm.kruskalAlgorithmButtonClick(Sender: TObject);
 var
@@ -652,6 +649,11 @@ procedure TAppForm.refreshGrid;
 var
   x, y: Integer;
 begin
+  for x := 1 to grid.ColCount - 1 do
+    grid.Cells[x, 0] := IntToStr(x);
+  for y := 1 to grid.RowCount - 1 do
+    grid.Cells[0, y] := IntToStr(y);
+
   //loop through matrix
   for x := 0 to length(matrix) - 1 do
     for y := 0 to length(matrix[x]) - 1 do
@@ -669,7 +671,88 @@ begin
           if matrix[x, y] = Unconnected then
             grid.Cells[x + 1, y + 1] := '0'
           else if matrix[x, y] = Connected then
-            grid.Cells[x + 1, y + 1] := '1'
+            grid.Cells[x + 1, y + 1] := '1';
+
+    refreshGraph;
+end;
+
+{ calculate vertex coordinates defined by table edge length, column count and
+vertex number }
+function getVertexPoint(table_el: double; cols, vertexNo: Integer): TPoint;
+var
+  h_table_el: double;
+begin
+  h_table_el := table_el / 2;
+  result.X := round((vertexNo mod cols) * table_el + h_table_el);
+  result.Y := round((vertexNo div cols) * table_el + h_table_el);
+end;
+
+procedure TAppForm.refreshGraph;
+var
+  rect: TRect;
+  s: String;
+  p1, p2: TPoint;
+  ar, table_el: double;
+  cols, rows, radius, i, x, y: Integer;
+begin
+  //calculate aspect ratio
+  ar := graph.Canvas.Height / graph.Canvas.Width;
+
+  //calculate optimal arrangement
+  cols := 1;
+  rows := 1;
+  while cols * rows < length(matrix) do
+  begin
+    if ((rows + 1) / cols) < ar then
+      Inc(rows)
+    else
+      Inc(cols);
+  end;
+
+  table_el := graph.Canvas.Width / cols;
+
+  graph.Canvas.clear;
+
+  //paint edges
+  for x := 0 to high(matrix) do
+    for y := 0 to high(matrix) do
+      if matrix[x, y] <> Unconnected then
+      begin
+        p1 := getVertexPoint(table_el, cols, x);
+        p2 := getVertexPoint(table_el, cols, y);
+        graph.Canvas.Line(p1.x, p1.y, p2.x, p2.y);
+      end;
+
+  //paint vertices
+  for i := 0 to high(matrix) do
+  begin
+    p1 := getVertexPoint(table_el, cols, i);
+
+    if VertexDiameter <= table_el then
+      radius := round(VertexDiameter / 2)
+    else
+      radius := round(table_el / 2);
+
+    //circle
+    rect.Left := p1.x - radius;
+    rect.Top := p1.y - radius;
+    rect.Right := p1.x + radius;
+    rect.Bottom := p1.y + radius;
+
+    graph.Canvas.Ellipse(rect);
+
+    //text
+    s := IntToStr(i + 1);
+
+    graph.Canvas.TextOut(p1.x - (graph.Canvas.TextWidth(s) div 2),
+      p1.y - (graph.Canvas.TextHeight(s) div 2), s);
+  end;
+end;
+
+procedure TAppForm.graphResize(Sender: TObject);
+begin
+  graph.Picture.Bitmap.SetSize(graph.width, graph.height);
+  refreshGraph;
 end;
 
 { Enable or Disable Editing according to weightedCheckBox }
