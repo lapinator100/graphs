@@ -105,7 +105,7 @@ var
   i: Integer;
 begin
   //loop through edges and set both directions for adjacency matrix as connected
-  for i := 0 to length(edges) - 1 do
+  for i := 0 to high(edges) do
   begin
     if weighted then
     begin
@@ -274,18 +274,18 @@ var
 begin
   setLength(edges, 0);
 
-  for x := 0 to length(matrix) - 1 do
-    for y := 0 to length(matrix) - 1 do
-      if not matrix[x, y] = Unconnected then
+  for x := 1 to high(matrix) do
+    for y := 0 to x - 1 do
+      if matrix[x, y] <> Unconnected then
       begin
         setLength(edges, length(edges) + 1);
-        edges[length(edges) - 1] := createEdge(x, y, matrix[x, y]);
+        edges[high(edges)] := createEdge(x, y, matrix[x, y]);
       end;
 
   result := edges;
 end;
 
-{ sort edges by weight ascending or descending (bubble sort) }
+{ sort edges (upper half) by weight ascending or descending (bubble sort) }       //TODO: Prefer edges with lowest vertex
 function sortEdges(edges: TEdgeList; ascending: Boolean): TEdgeList;
 var
   i: Integer;
@@ -314,30 +314,94 @@ begin
   result := edges;
 end;
 
-function circleExisting(edges: TEdgeList): Boolean;
-begin
-  result := False; //dummy, modified depth-first search to be applied
-end;
-
+{ create a minimal spanning tree by adding vertices from lowest to highest
+avoiding circles }
 function kruskalAlgorithm(matrix: TMatrix): TEdgeList;
 var
-  i: Integer;
-  e0, e1: TEdgeList;
+  s: String;
+  i, j, k, first, second, temp, first_length: Integer;
+  edges: TEdgeList;
+  min_tree: array of TEdgeList;
 begin
-  e1 := matrixToEdges(matrix);
-  e1 := sortEdges(e1, true);
+  //init
+  setLength(min_tree, 0, 0);
+
+  //sort all edges ascending
+  edges := matrixToEdges(matrix);
+  edges := sortEdges(edges, true);
 
   //loop edges from lowest to highest
-  for i := 0 to length(e1) - 1 do
-    //add next edge
-    setLength(e0, length(e0) + 1);
-    e0[high(e0)] := e1[i];
+  for i := 0 to high(edges) do
+  begin
+    //test if vertex of edge exists in min_tree
+    first := -1;
+    second := -1;
 
-    //remove edge if circle existing
-    if circleExisting(e0) then
-      setLength(e0, length(e0) - 1);
+    for j := 0 to high(min_tree) do
+      for k := 0 to high(min_tree[j]) do
+      begin
+        if (edges[i].first = min_tree[j, k].first)
+            or (edges[i].first = min_tree[j, k].second) then
+          first := j;
+        if (edges[i].second = min_tree[j, k].first)
+            or (edges[i].first = min_tree[j, k].second) then
+          second := j;
+      end;
 
-  result := e0;
+    //if edge connects 2 clusters, add it
+
+    //add edge as new cluster if not connected to other clusters
+    if (first = -1) and (second = -1) then
+    begin
+      setLength(min_tree, length(min_tree) + 1);
+      setLength(min_tree[high(min_tree)], length(min_tree[high(min_tree)]) + 1);
+      min_tree[high(min_tree), high(min_tree[high(min_tree)])] := edges[i];
+    end
+    else
+      //add edge to second list if connected to it
+      if first = -1 then
+      begin
+        setLength(min_tree[second], length(min_tree[second]) + 1);
+        min_tree[second, high(min_tree[second])] := edges[i];
+      end
+      else
+        //add edge to first list if connected to it
+        if second = -1 then
+        begin
+          setLength(min_tree[first], length(min_tree[first]) + 1);
+          min_tree[first, high(min_tree[first])] := edges[i];
+        end
+        else
+          //if edge is connecting 2 clusters, join them
+          if first <> second then
+          begin
+            //first always contains smaller index
+            if first > second then
+            begin
+              temp := first;
+              first := second;
+              second := temp;
+            end;
+
+            //merge cluster lists connected by new edge
+            first_length := length(min_tree[first]);
+            setLength(min_tree[first], length(min_tree[first])
+              + length(min_tree[second]));
+
+            for j := 0 to high(min_tree[second]) do
+              min_tree[first, first_length + j] := min_tree[second, j];
+
+            setLength(min_tree[second], 0);
+          end;
+  end;
+
+  //look for last non-empty list to be returned
+  for i := 0 to high(min_tree) do
+    if length(min_tree[i]) <> 0 then
+    begin
+      result := min_tree[i];
+      break;
+    end;
 end;
 
 function primAlgorithm(matrix: TMatrix): TEdgeList;
@@ -720,6 +784,7 @@ begin
       begin
         p1 := getVertexPoint(table_el, cols, x);
         p2 := getVertexPoint(table_el, cols, y);
+
         graph.Canvas.Line(p1.x, p1.y, p2.x, p2.y);
       end;
 
