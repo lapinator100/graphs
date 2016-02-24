@@ -480,6 +480,8 @@ procedure TAppForm.FormCreate(Sender: TObject);
 begin
   //emulate change of adjacency matrix's size for initialization
   matrixSizeInputChange(Sender);
+  //imitate change of weightedCheckBox
+  weightedCheckBoxChange(Sender);
 
   //initialize symmetry and weighted bools
   symmetric := symmetryCheckBox.checked;
@@ -832,6 +834,10 @@ begin
     for i := 0 to length(matrix) - 1 do
       matrix[i, i] := Unconnected;
 
+    depthFirstSearchButton.Enabled := False;
+    breadthFirstSearchButton.Enabled := False;
+    kruskalAlgorithmButton.Enabled := True;
+    PrimAlgorithmButton.Enabled := True;
     grid.Options := grid.Options + [goEditing]
   end
   else
@@ -841,6 +847,10 @@ begin
     for i := 0 to length(matrix) - 1 do
       matrix[i, i] := Unconnected;
 
+    depthFirstSearchButton.Enabled := True;
+    breadthFirstSearchButton.Enabled := True;
+    kruskalAlgorithmButton.Enabled := False;
+    PrimAlgorithmButton.Enabled := False;
     grid.Options := grid.Options - [goEditing];
   end;
 
