@@ -92,8 +92,8 @@ var
   x, y: Integer;
 begin
   //loop through matrix and set each value to unconnected if it was not set before
-  for x := 0 to length(matrix) - 1 do
-    for y := 0 to length(matrix[x]) - 1 do
+  for x := 0 to high(matrix) do
+    for y := 0 to high(matrix[x]) do
       if matrix[x, y] = Unset then
         matrix[x, y] := Unconnected;
 end;
@@ -471,6 +471,7 @@ begin
   result := e_used;
 end;
 
+{ split a string into an array }
 function split(s: string; delimiter: char): TStringArray;
 var
   i: Integer;
@@ -571,6 +572,7 @@ begin
     for i := 0 to length(matrix) - 1 do
       matrix[i, i] := Unconnected;
 
+    //change UI
     depthFirstSearchButton.Enabled := False;
     breadthFirstSearchButton.Enabled := False;
     kruskalAlgorithmButton.Enabled := True;
@@ -584,6 +586,7 @@ begin
     for i := 0 to length(matrix) - 1 do
       matrix[i, i] := Unconnected;
 
+    //change UI
     depthFirstSearchButton.Enabled := True;
     breadthFirstSearchButton.Enabled := True;
     kruskalAlgorithmButton.Enabled := False;

@@ -17,74 +17,73 @@
         <ComponentName Value="AppForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="4"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="64"/>
         <CursorPos X="35" Y="9"/>
         <UsageCount Value="94"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
+        <Filename Value="model.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="25" Y="8"/>
+        <UsageCount Value="20"/>
+      </Unit2>
+      <Unit3>
         <Filename Value="/Volumes/STEFFEN/Informatikscheiss/unit1.pas"/>
         <UnitName Value="Unit1"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="77" Y="18"/>
         <UsageCount Value="4"/>
-      </Unit2>
-      <Unit3>
+      </Unit3>
+      <Unit4>
         <Filename Value="/Developer/lazarus/lcl/include/control.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2713"/>
         <CursorPos Y="2740"/>
         <UsageCount Value="4"/>
-      </Unit3>
-      <Unit4>
+      </Unit4>
+      <Unit5>
         <Filename Value="/Developer/lazarus/lcl/include/buttoncontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="31"/>
         <CursorPos Y="55"/>
         <UsageCount Value="4"/>
-      </Unit4>
-      <Unit5>
+      </Unit5>
+      <Unit6>
         <Filename Value="/Developer/lazarus/lcl/include/buttons.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="146"/>
         <CursorPos Y="170"/>
         <UsageCount Value="4"/>
-      </Unit5>
-      <Unit6>
+      </Unit6>
+      <Unit7>
         <Filename Value="/Developer/lazarus/lcl/include/wincontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="5360"/>
         <CursorPos Y="5384"/>
         <UsageCount Value="4"/>
-      </Unit6>
-      <Unit7>
+      </Unit7>
+      <Unit8>
         <Filename Value="/Developer/lazarus/lcl/lclmessageglue.pas"/>
         <UnitName Value="LCLMessageGlue"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="97"/>
         <CursorPos Y="120"/>
         <UsageCount Value="4"/>
-      </Unit7>
-      <Unit8>
+      </Unit8>
+      <Unit9>
         <Filename Value="/usr/share/lazarus/1.6/lcl/grids.pas"/>
         <UnitName Value="Grids"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="9207"/>
         <CursorPos Y="9287"/>
         <UsageCount Value="11"/>
-      </Unit8>
-      <Unit9>
-        <Filename Value="model.pas"/>
-        <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <CursorPos X="25" Y="8"/>
-        <UsageCount Value="20"/>
-        <Loaded Value="True"/>
       </Unit9>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="app.pas"/>
         <Caret Line="826" Column="25" TopLine="816"/>
@@ -201,10 +200,6 @@
         <Filename Value="app.pas"/>
         <Caret Line="10" Column="67"/>
       </Position29>
-      <Position30>
-        <Filename Value="model.pas"/>
-        <Caret Line="21" Column="7"/>
-      </Position30>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>
