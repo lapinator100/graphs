@@ -3,7 +3,7 @@
   <ProjectSession>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="9">
+    <Units Count="10">
       <Unit0>
         <Filename Value="graphs.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -17,9 +17,8 @@
         <ComponentName Value="AppForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="390"/>
-        <CursorPos X="18" Y="401"/>
+        <TopLine Value="4"/>
+        <CursorPos X="35" Y="9"/>
         <UsageCount Value="94"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -75,127 +74,136 @@
         <CursorPos Y="9287"/>
         <UsageCount Value="11"/>
       </Unit8>
+      <Unit9>
+        <Filename Value="model.pas"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="25" Y="8"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit9>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="app.pas"/>
-        <Caret Line="842" Column="31" TopLine="825"/>
+        <Caret Line="826" Column="25" TopLine="816"/>
       </Position1>
       <Position2>
         <Filename Value="app.pas"/>
-        <Caret Line="582" Column="3" TopLine="577"/>
+        <Caret Line="825" Column="60" TopLine="814"/>
       </Position2>
       <Position3>
         <Filename Value="app.pas"/>
-        <Caret Line="359" Column="55" TopLine="345"/>
+        <Caret Line="826" Column="3" TopLine="815"/>
       </Position3>
       <Position4>
         <Filename Value="app.pas"/>
-        <Caret Line="826" Column="25" TopLine="816"/>
+        <Caret Line="825" Column="3" TopLine="814"/>
       </Position4>
       <Position5>
         <Filename Value="app.pas"/>
-        <Caret Line="825" Column="60" TopLine="814"/>
+        <Caret Line="827" Column="17" TopLine="814"/>
       </Position5>
       <Position6>
         <Filename Value="app.pas"/>
-        <Caret Line="826" Column="3" TopLine="815"/>
+        <Caret Line="579" Column="3" TopLine="574"/>
       </Position6>
       <Position7>
         <Filename Value="app.pas"/>
-        <Caret Line="825" Column="3" TopLine="814"/>
+        <Caret Line="386" Column="41" TopLine="378"/>
       </Position7>
       <Position8>
         <Filename Value="app.pas"/>
-        <Caret Line="827" Column="17" TopLine="814"/>
+        <Caret Line="410" Column="29" TopLine="388"/>
       </Position8>
       <Position9>
         <Filename Value="app.pas"/>
-        <Caret Line="579" Column="3" TopLine="574"/>
+        <Caret Line="321" Column="13" TopLine="305"/>
       </Position9>
       <Position10>
         <Filename Value="app.pas"/>
-        <Caret Line="386" Column="41" TopLine="378"/>
+        <Caret Line="409" Column="18" TopLine="390"/>
       </Position10>
       <Position11>
         <Filename Value="app.pas"/>
-        <Caret Line="410" Column="29" TopLine="388"/>
+        <Caret Line="388" Column="47" TopLine="375"/>
       </Position11>
       <Position12>
         <Filename Value="app.pas"/>
-        <Caret Line="321" Column="13" TopLine="305"/>
+        <Caret Line="393" Column="48" TopLine="382"/>
       </Position12>
       <Position13>
         <Filename Value="app.pas"/>
-        <Caret Line="409" Column="18" TopLine="390"/>
+        <Caret Line="253" Column="31" TopLine="243"/>
       </Position13>
       <Position14>
         <Filename Value="app.pas"/>
-        <Caret Line="388" Column="47" TopLine="375"/>
+        <Caret Line="325" Column="50" TopLine="313"/>
       </Position14>
       <Position15>
         <Filename Value="app.pas"/>
-        <Caret Line="393" Column="48" TopLine="382"/>
+        <Caret Line="420" Column="51" TopLine="406"/>
       </Position15>
       <Position16>
         <Filename Value="app.pas"/>
-        <Caret Line="253" Column="31" TopLine="243"/>
+        <Caret Line="426" Column="76" TopLine="415"/>
       </Position16>
       <Position17>
         <Filename Value="app.pas"/>
-        <Caret Line="325" Column="50" TopLine="313"/>
+        <Caret Line="423" Column="35" TopLine="415"/>
       </Position17>
       <Position18>
         <Filename Value="app.pas"/>
-        <Caret Line="420" Column="51" TopLine="406"/>
+        <Caret Line="584" Column="21" TopLine="564"/>
       </Position18>
       <Position19>
         <Filename Value="app.pas"/>
-        <Caret Line="426" Column="76" TopLine="415"/>
+        <Caret Line="108" Column="28" TopLine="97"/>
       </Position19>
       <Position20>
         <Filename Value="app.pas"/>
-        <Caret Line="423" Column="35" TopLine="415"/>
+        <Caret Line="593" Column="3" TopLine="588"/>
       </Position20>
       <Position21>
         <Filename Value="app.pas"/>
-        <Caret Line="584" Column="21" TopLine="564"/>
+        <Caret Line="336" Column="26" TopLine="326"/>
       </Position21>
       <Position22>
         <Filename Value="app.pas"/>
-        <Caret Line="108" Column="28" TopLine="97"/>
+        <Caret Line="335" Column="46" TopLine="322"/>
       </Position22>
       <Position23>
         <Filename Value="app.pas"/>
-        <Caret Line="593" Column="3" TopLine="588"/>
+        <Caret Line="399" Column="13" TopLine="391"/>
       </Position23>
       <Position24>
         <Filename Value="app.pas"/>
-        <Caret Line="336" Column="26" TopLine="326"/>
+        <Caret Line="537" Column="90" TopLine="532"/>
       </Position24>
       <Position25>
         <Filename Value="app.pas"/>
-        <Caret Line="335" Column="46" TopLine="322"/>
+        <Caret Line="597" Column="3" TopLine="592"/>
       </Position25>
       <Position26>
         <Filename Value="app.pas"/>
-        <Caret Line="399" Column="13" TopLine="391"/>
+        <Caret Line="393" Column="30" TopLine="374"/>
       </Position26>
       <Position27>
         <Filename Value="app.pas"/>
-        <Caret Line="537" Column="90" TopLine="532"/>
+        <Caret Line="402" Column="44" TopLine="392"/>
       </Position27>
       <Position28>
         <Filename Value="app.pas"/>
-        <Caret Line="597" Column="3" TopLine="592"/>
+        <Caret Line="30" Column="53" TopLine="13"/>
       </Position28>
       <Position29>
         <Filename Value="app.pas"/>
-        <Caret Line="393" Column="30" TopLine="374"/>
+        <Caret Line="10" Column="67"/>
       </Position29>
       <Position30>
-        <Filename Value="app.pas"/>
-        <Caret Line="402" Column="44" TopLine="392"/>
+        <Filename Value="model.pas"/>
+        <Caret Line="21" Column="7"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

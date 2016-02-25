@@ -13,39 +13,38 @@ type
   { TAppForm }
 
   TAppForm = class(TForm)
-    breadthFirstSearchButton: TButton;
-    depthFirstSearchButton: TButton;
-    graph: TImage;
-    kruskalAlgorithmButton: TButton;
-    loadButton: TButton;
+    panel: TPanel;
     matrixSizeInput: TSpinEdit;
-    openDialog: TOpenDialog;
-    Panel1: TPanel;
-    PrimAlgorithmButton: TButton;
-    saveButton: TButton;
-    saveDialog: TSaveDialog;
     grid: TStringGrid;
+    graph: TImage;
     splitter: TSplitter;
-    symmetryCheckBox: TCheckBox;
-    weightedCheckBox: TCheckBox;
+    breadthFirstSearchButton, depthFirstSearchButton, kruskalAlgorithmButton,
+      PrimAlgorithmButton, loadButton, saveButton: TButton;
+    openDialog: TOpenDialog;
+    saveDialog: TSaveDialog;
+    symmetryCheckBox, weightedCheckBox: TCheckBox;
 
-    procedure breadthFirstSearchButtonClick(Sender: TObject);
-    procedure kruskalAlgorithmButtonClick(Sender: TObject);
-    procedure depthFirstSearchButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+
+    procedure matrixSizeInputChange(Sender: TObject);
+    procedure symmetryCheckBoxChange(Sender: TObject);
+    procedure weightedCheckBoxChange(Sender: TObject);
+
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
     procedure gridValidateEntry(sender: TObject; aCol, aRow: Integer;
       const OldValue: string; var NewValue: String);
-    procedure loadButtonClick(Sender: TObject);
-    procedure matrixSizeInputChange(Sender: TObject);
-    procedure PrimAlgorithmButtonClick(Sender: TObject);
-    procedure saveButtonClick(Sender: TObject);
     procedure graphResize(Sender: TObject);
-    procedure symmetryCheckBoxChange(Sender: TObject);
+
+    procedure loadButtonClick(Sender: TObject);
+    procedure saveButtonClick(Sender: TObject);
+
+    procedure breadthFirstSearchButtonClick(Sender: TObject);
+    procedure depthFirstSearchButtonClick(Sender: TObject);
+    procedure kruskalAlgorithmButtonClick(Sender: TObject);
+    procedure PrimAlgorithmButtonClick(Sender: TObject);
 
     procedure refreshGrid;
     procedure refreshGraph;
-    procedure weightedCheckBoxChange(Sender: TObject);
   end;
 
   TEdge = record
@@ -54,12 +53,10 @@ type
     weight: Integer;
   end;
 
-  TStringArray = array of String;
-
   TMatrix = array of array of Integer;
   TVertexList = array of Integer;
   TEdgeList = array of TEdge;
-
+  TStringArray = array of String;
 var
   AppForm: TAppForm;
   matrix: TMatrix;
@@ -76,7 +73,9 @@ const
 implementation
 
 
-{ Set all vertexes in matrix given to unconnected }
+//-----data methods-----
+
+{ Set all vertices in matrix given to unconnected }
 procedure clearMatrix(var matrix: TMatrix);
 var
   x, y: Integer;
@@ -472,6 +471,38 @@ begin
   result := e_used;
 end;
 
+function split(s: string; delimiter: char): TStringArray;
+var
+  i: Integer;
+  stringlist: TStringList;
+begin
+  stringlist := TStringList.create;
+
+  try
+    stringlist.delimiter := delimiter;
+    stringlist.DelimitedText := s;
+
+    setLength(result, stringlist.Count);
+    for i := 0 to high(result) do
+      result[i] := stringlist.ValueFromIndex[i];
+  finally
+    stringlist.free;
+  end;
+end;
+
+{ calculate vertex coordinates defined by table edge length, column count and
+vertex number }
+function getVertexPoint(table_el: double; cols, vertexNo: Integer): TPoint;
+var
+  h_table_el: double;
+begin
+  h_table_el := table_el / 2;
+  result.X := round((vertexNo mod cols) * table_el + h_table_el);
+  result.Y := round((vertexNo div cols) * table_el + h_table_el);
+end;
+
+
+//-----UI methods-----
 
 {$R *.lfm}
 
@@ -488,15 +519,77 @@ begin
   weighted := weightedCheckBox.checked;
 end;
 
-{ Change matrix data when edited (Only weighted graphs) }
-procedure TAppForm.gridValidateEntry(sender: TObject; aCol, aRow: Integer;
-  const OldValue: string; var NewValue: String);
+{ Handle change of matrix size matrixSizeInput value }
+procedure TAppForm.matrixSizeInputChange(Sender: TObject);
+var
+  size: Integer;
 begin
-  if not (acol = arow) then
-    if (NewValue = '-') or (NewValue = '∞') then
-      matrix[aCol - 1, aRow - 1] := Unconnected
-    else
-      matrix[aCol - 1, aRow - 1] := StrToInt(NewValue);
+  size := matrixSizeInput.value;
+
+  //set size of matrix
+  setLength(matrix, size, size);
+
+  //adapt size of grid
+  grid.RowCount := size + 1;
+  grid.ColCount := size + 1;
+
+  //fill new values and refresh UI
+  fillMatrix(matrix);
+  refreshGrid;
+end;
+
+{ Mirror adjacency matrix if checkbox is checked }
+procedure TAppForm.symmetryCheckBoxChange(Sender: TObject);
+var
+  x, y: Integer;
+begin
+  if symmetryCheckBox.checked then
+  begin
+    symmetric := true;
+
+    //loop through matrix
+    for x := 0 to length(matrix) - 1 do
+      for y := (x + 1) to length(matrix[x]) - 1 do
+        //mirror values from upper half to lower half
+        matrix[x, y] := matrix[y, x];
+
+    refreshGrid;
+  end
+  else
+    symmetric := false;
+end;
+
+{ Enable or Disable Editing according to weightedCheckBox }
+procedure TAppForm.weightedCheckBoxChange(Sender: TObject);
+var
+  i: Integer;
+begin
+  if weightedCheckBox.checked then
+  begin
+    weighted := true;
+
+    for i := 0 to length(matrix) - 1 do
+      matrix[i, i] := Unconnected;
+
+    depthFirstSearchButton.Enabled := False;
+    breadthFirstSearchButton.Enabled := False;
+    kruskalAlgorithmButton.Enabled := True;
+    PrimAlgorithmButton.Enabled := True;
+    grid.Options := grid.Options + [goEditing]
+  end
+  else
+  begin
+    weighted := false;
+
+    for i := 0 to length(matrix) - 1 do
+      matrix[i, i] := Unconnected;
+
+    depthFirstSearchButton.Enabled := True;
+    breadthFirstSearchButton.Enabled := True;
+    kruskalAlgorithmButton.Enabled := False;
+    PrimAlgorithmButton.Enabled := False;
+    grid.Options := grid.Options - [goEditing];
+  end;
 
   refreshGrid;
 end;
@@ -537,93 +630,27 @@ begin
   refreshGrid;
 end;
 
-{ Handle change of matrix size matrixSizeInput value }
-procedure TAppForm.matrixSizeInputChange(Sender: TObject);
-var
-  size: Integer;
+{ Change matrix data when edited (Only weighted graphs) }
+procedure TAppForm.gridValidateEntry(sender: TObject; aCol, aRow: Integer;
+  const OldValue: string; var NewValue: String);
 begin
-  size := matrixSizeInput.value;
+  if not (acol = arow) then
+    if (NewValue = '-') or (NewValue = '∞') then
+      matrix[aCol - 1, aRow - 1] := Unconnected
+    else
+      matrix[aCol - 1, aRow - 1] := StrToInt(NewValue);
 
-  //set size of matrix
-  setLength(matrix, size, size);
-
-  //adapt size of grid
-  grid.RowCount := size + 1;
-  grid.ColCount := size + 1;
-
-  //fill new values and refresh UI
-  fillMatrix(matrix);
   refreshGrid;
 end;
 
-{ Perform breadth-first serach on adjacency matrix }
-procedure TAppForm.breadthFirstSearchButtonClick(Sender: TObject);
-var edges: TEdgeList;
+{ Resize graph bitmap if graph size changed }
+procedure TAppForm.graphResize(Sender: TObject);
 begin
-  edges := breadthFirstSearch(matrix);
-
-  //reset current matrix, add edges, and resfresh UI
-  clearMatrix(matrix);
-  applyEdgesToMatrix(matrix, edges);
-  refreshGrid;
+  graph.Picture.Bitmap.SetSize(graph.width, graph.height);
+  refreshGraph;
 end;
 
-{ Perform Kruskal algorithm creating minimal spanning tree }
-procedure TAppForm.kruskalAlgorithmButtonClick(Sender: TObject);
-var
-  edges: TEdgeList;
-begin
-  if not weighted then
-  begin
-    showMessage('Der Kruskal-Algorithmus ist nur auf gewichtete Graphen anwendbar.');
-    exit;
-  end;
-
-  edges := kruskalAlgorithm(matrix);
-
-  //reset current matrix, add edges and refresh UI
-  clearMatrix(matrix);
-  applyEdgesToMatrix(matrix, edges);
-  refreshGrid;
-end;
-
-procedure TAppForm.PrimAlgorithmButtonClick(Sender: TObject);
-var
-  edges: TEdgeList;
-begin
-  if not weighted then
-  begin
-    showMessage('Der Prim-Algorithmus ist nur auf gewichtete Graphen anwendbar.');
-    exit;
-  end;
-
-  edges := primAlgorithm(matrix);
-
-  //reset current matrix, add edges and refresh UI
-  clearMatrix(matrix);
-  applyEdgesToMatrix(matrix, edges);
-  refreshGrid;
-end;
-
-function split(s: string; delimiter: char): TStringArray;
-var
-  i: Integer;
-  stringlist: TStringList;
-begin
-  stringlist := TStringList.create;
-
-  try
-    stringlist.delimiter := delimiter;
-    stringlist.DelimitedText := s;
-
-    setLength(result, stringlist.Count);
-    for i := 0 to high(result) do
-      result[i] := stringlist.ValueFromIndex[i];
-  finally
-    stringlist.free;
-  end;
-end;
-
+{ load from file }
 procedure TAppForm.loadButtonClick(Sender: TObject);
 var
   x, y: Integer;
@@ -658,6 +685,7 @@ begin
   end;
 end;
 
+{ save to file }
 procedure TAppForm.saveButtonClick(Sender: TObject);
 var
   x, y: Integer;
@@ -698,6 +726,18 @@ begin
   end;
 end;
 
+{ Perform breadth-first serach on adjacency matrix }
+procedure TAppForm.breadthFirstSearchButtonClick(Sender: TObject);
+var edges: TEdgeList;
+begin
+  edges := breadthFirstSearch(matrix);
+
+  //reset current matrix, add edges, and resfresh UI
+  clearMatrix(matrix);
+  applyEdgesToMatrix(matrix, edges);
+  refreshGrid;
+end;
+
 { Perform depth-first serach on adjacency matrix }
 procedure TAppForm.depthFirstSearchButtonClick(Sender: TObject);
 var edges: TEdgeList;
@@ -705,6 +745,44 @@ begin
   edges := depthFirstSearch(matrix);
 
   //reset current matrix, add edges, and resfresh UI
+  clearMatrix(matrix);
+  applyEdgesToMatrix(matrix, edges);
+  refreshGrid;
+end;
+
+{ Perform Kruskal algorithm creating minimal spanning tree }
+procedure TAppForm.kruskalAlgorithmButtonClick(Sender: TObject);
+var
+  edges: TEdgeList;
+begin
+  if not weighted then
+  begin
+    showMessage('Der Kruskal-Algorithmus ist nur auf gewichtete Graphen anwendbar.');
+    exit;
+  end;
+
+  edges := kruskalAlgorithm(matrix);
+
+  //reset current matrix, add edges and refresh UI
+  clearMatrix(matrix);
+  applyEdgesToMatrix(matrix, edges);
+  refreshGrid;
+end;
+
+{ Perform Prim algorithm creating minimal spanning tree }
+procedure TAppForm.PrimAlgorithmButtonClick(Sender: TObject);
+var
+  edges: TEdgeList;
+begin
+  if not weighted then
+  begin
+    showMessage('Der Prim-Algorithmus ist nur auf gewichtete Graphen anwendbar.');
+    exit;
+  end;
+
+  edges := primAlgorithm(matrix);
+
+  //reset current matrix, add edges and refresh UI
   clearMatrix(matrix);
   applyEdgesToMatrix(matrix, edges);
   refreshGrid;
@@ -742,17 +820,7 @@ begin
     refreshGraph;
 end;
 
-{ calculate vertex coordinates defined by table edge length, column count and
-vertex number }
-function getVertexPoint(table_el: double; cols, vertexNo: Integer): TPoint;
-var
-  h_table_el: double;
-begin
-  h_table_el := table_el / 2;
-  result.X := round((vertexNo mod cols) * table_el + h_table_el);
-  result.Y := round((vertexNo div cols) * table_el + h_table_el);
-end;
-
+{ paint graph based on adjacency matrix }
 procedure TAppForm.refreshGraph;
 var
   rect: TRect;
@@ -814,68 +882,6 @@ begin
     graph.Canvas.TextOut(p1.x - (graph.Canvas.TextWidth(s) div 2),
       p1.y - (graph.Canvas.TextHeight(s) div 2), s);
   end;
-end;
-
-procedure TAppForm.graphResize(Sender: TObject);
-begin
-  graph.Picture.Bitmap.SetSize(graph.width, graph.height);
-  refreshGraph;
-end;
-
-{ Enable or Disable Editing according to weightedCheckBox }
-procedure TAppForm.weightedCheckBoxChange(Sender: TObject);
-var
-  i: Integer;
-begin
-  if weightedCheckBox.checked then
-  begin
-    weighted := true;
-
-    for i := 0 to length(matrix) - 1 do
-      matrix[i, i] := Unconnected;
-
-    depthFirstSearchButton.Enabled := False;
-    breadthFirstSearchButton.Enabled := False;
-    kruskalAlgorithmButton.Enabled := True;
-    PrimAlgorithmButton.Enabled := True;
-    grid.Options := grid.Options + [goEditing]
-  end
-  else
-  begin
-    weighted := false;
-
-    for i := 0 to length(matrix) - 1 do
-      matrix[i, i] := Unconnected;
-
-    depthFirstSearchButton.Enabled := True;
-    breadthFirstSearchButton.Enabled := True;
-    kruskalAlgorithmButton.Enabled := False;
-    PrimAlgorithmButton.Enabled := False;
-    grid.Options := grid.Options - [goEditing];
-  end;
-
-  refreshGrid;
-end;
-
-{ Mirror adjacency matrix if checkbox is checked }
-procedure TAppForm.symmetryCheckBoxChange(Sender: TObject);
-var
-  x, y: Integer;
-begin
-  if symmetryCheckBox.checked then
-  begin
-    symmetric := true;
-
-    //loop through matrix
-    for x := 0 to length(matrix) - 1 do
-      for y := (x + 1) to length(matrix[x]) - 1 do
-        //mirror values from upper half to lower half
-        matrix[x, y] := matrix[y, x];
-
-    refreshGrid;
-  end
-  else
-    symmetric := false;
 end;
 
 end.

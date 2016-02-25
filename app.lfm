@@ -44,7 +44,7 @@ object AppForm: TAppForm
     Align = alRight
     OnResize = graphResize
   end
-  object Panel1: TPanel
+  object panel: TPanel
     Left = 0
     Height = 58
     Top = 0
