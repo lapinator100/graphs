@@ -10,9 +10,21 @@ uses
 
 type
 
+  TEdge = record
+    first: Integer;
+    second: Integer;
+    weight: Integer;
+  end;
+
+  TMatrix = array of array of Integer;
+  TVertexList = array of Integer;
+  TEdgeList = array of TEdge;
+  TStringArray = array of String;
+
   { TAppForm }
 
   TAppForm = class(TForm)
+    markOnlyCheckbox: TCheckBox;
     panel: TPanel;
     matrixSizeInput: TSpinEdit;
     grid: TStringGrid;
@@ -42,23 +54,14 @@ type
     procedure kruskalAlgorithmButtonClick(Sender: TObject);
     procedure PrimAlgorithmButtonClick(Sender: TObject);
 
+    procedure updateUIWithEdges(edges: TEdgeList);
     procedure refreshGrid;
     procedure refreshGraph;
   end;
 
-  TEdge = record
-    first: Integer;
-    second: Integer;
-    weight: Integer;
-  end;
-
-  TMatrix = array of array of Integer;
-  TVertexList = array of Integer;
-  TEdgeList = array of TEdge;
-  TStringArray = array of String;
 var
   AppForm: TAppForm;
-  matrix: TMatrix;
+  matrix, markedMatrix: TMatrix;
   weighted: boolean;
 
 const
@@ -316,7 +319,6 @@ end;
 avoiding circles }
 function kruskalAlgorithm(matrix: TMatrix): TEdgeList;
 var
-  s: String;
   i, j, k, first, second, temp, first_length: Integer;
   edges: TEdgeList;
   min_tree: array of TEdgeList;
@@ -527,13 +529,16 @@ begin
 
   //set size of matrix
   setLength(matrix, size, size);
+  setLength(markedMatrix, size, size);
 
   //adapt size of grid
   grid.RowCount := size + 1;
   grid.ColCount := size + 1;
 
   //fill new values and refresh UI
+  clearMatrix(matrix);
   fillMatrix(matrix);
+  fillMatrix(markedMatrix);
   refreshGrid;
 end;
 
@@ -603,6 +608,7 @@ begin
     matrix[aRow - 1, aCol - 1] := Connected;
   end;
 
+  clearMatrix(markedMatrix);
   refreshGrid;
 end;
 
@@ -711,11 +717,7 @@ procedure TAppForm.breadthFirstSearchButtonClick(Sender: TObject);
 var edges: TEdgeList;
 begin
   edges := breadthFirstSearch(matrix);
-
-  //reset current matrix, add edges, and resfresh UI
-  clearMatrix(matrix);
-  applyEdgesToMatrix(matrix, edges);
-  refreshGrid;
+  updateUIWithEdges(edges);
 end;
 
 { Perform depth-first serach on adjacency matrix }
@@ -723,11 +725,7 @@ procedure TAppForm.depthFirstSearchButtonClick(Sender: TObject);
 var edges: TEdgeList;
 begin
   edges := depthFirstSearch(matrix);
-
-  //reset current matrix, add edges, and resfresh UI
-  clearMatrix(matrix);
-  applyEdgesToMatrix(matrix, edges);
-  refreshGrid;
+  updateUIWithEdges(edges);
 end;
 
 { Perform Kruskal algorithm creating minimal spanning tree }
@@ -742,11 +740,7 @@ begin
   end;
 
   edges := kruskalAlgorithm(matrix);
-
-  //reset current matrix, add edges and refresh UI
-  clearMatrix(matrix);
-  applyEdgesToMatrix(matrix, edges);
-  refreshGrid;
+  updateUIWithEdges(edges);
 end;
 
 { Perform Prim algorithm creating minimal spanning tree }
@@ -761,10 +755,25 @@ begin
   end;
 
   edges := primAlgorithm(matrix);
+  updateUIWithEdges(edges);
+end;
 
-  //reset current matrix, add edges and refresh UI
-  clearMatrix(matrix);
-  applyEdgesToMatrix(matrix, edges);
+{ Update grid and graph with the edges given and global settings }
+procedure TAppForm.updateUIWithEdges(edges: TEdgeList);
+begin
+  //mark edges if checkbox is checked
+  if markOnlyCheckbox.Checked then
+  begin
+    clearMatrix(markedMatrix);
+    applyEdgesToMatrix(markedMatrix, edges);;
+  end
+  else
+  begin
+    clearMatrix(matrix);
+    clearMatrix(markedMatrix);
+    applyEdgesToMatrix(matrix, edges);
+  end;
+
   refreshGrid;
 end;
 
@@ -830,15 +839,30 @@ begin
   //paint edges
   for x := 0 to high(matrix) do
     for y := 0 to high(matrix) do
-      if matrix[x, y] <> Unconnected then
+    begin
+      if markedMatrix[x, y] <> Unconnected then
       begin
-        p1 := getVertexPoint(table_el, cols, x);
-        p2 := getVertexPoint(table_el, cols, y);
+         graph.Canvas.Pen.Color := clGreen;
+         graph.Canvas.Pen.Width := 3;
+      end
+      else if matrix[x, y] <> Unconnected then
+      begin
+         graph.Canvas.pen.Color := clBlack;
+         graph.Canvas.Pen.Width := 1;
+      end
+      else
+        continue;
 
-        graph.Canvas.Line(p1.x, p1.y, p2.x, p2.y);
-      end;
+      p1 := getVertexPoint(table_el, cols, x);
+      p2 := getVertexPoint(table_el, cols, y);
+
+      graph.Canvas.Line(p1.x, p1.y, p2.x, p2.y);
+    end;
 
   //paint vertices
+  graph.Canvas.pen.Color := clBlack;
+  graph.Canvas.Pen.Width := 1;
+
   for i := 0 to high(matrix) do
   begin
     p1 := getVertexPoint(table_el, cols, i);

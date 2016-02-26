@@ -1,7 +1,7 @@
 object AppForm: TAppForm
-  Left = 756
+  Left = 713
   Height = 437
-  Top = 475
+  Top = 495
   Width = 561
   Caption = 'Graphen'
   ClientHeight = 437
@@ -12,8 +12,8 @@ object AppForm: TAppForm
   LCLVersion = '1.6.0.4'
   object grid: TStringGrid
     Left = 0
-    Height = 379
-    Top = 58
+    Height = 355
+    Top = 82
     Width = 308
     Align = alClient
     ColCount = 3
@@ -39,19 +39,19 @@ object AppForm: TAppForm
   end
   object graph: TImage
     Left = 311
-    Height = 379
-    Top = 58
+    Height = 355
+    Top = 82
     Width = 250
     Align = alRight
     OnResize = graphResize
   end
   object panel: TPanel
     Left = 0
-    Height = 58
+    Height = 82
     Top = 0
     Width = 561
     Align = alTop
-    ClientHeight = 58
+    ClientHeight = 82
     ClientWidth = 561
     TabOrder = 1
     object matrixSizeInput: TSpinEdit
@@ -131,11 +131,20 @@ object AppForm: TAppForm
       OnClick = PrimAlgorithmButtonClick
       TabOrder = 7
     end
+    object markOnlyCheckbox: TCheckBox
+      Left = 355
+      Height = 18
+      Top = 58
+      Width = 175
+      Anchors = [akTop, akRight]
+      Caption = 'Ergebnisse nur markieren'
+      TabOrder = 8
+    end
   end
   object splitter: TSplitter
     Left = 308
-    Height = 379
-    Top = 58
+    Height = 355
+    Top = 82
     Width = 3
     Align = alRight
     OnChangeBounds = graphResize
