@@ -63,85 +63,74 @@ object AppForm: TAppForm
       TabOrder = 0
       Value = 2
     end
-    object symmetryCheckBox: TCheckBox
-      Left = 96
-      Height = 21
-      Top = 8
-      Width = 88
-      Caption = 'Symmetrie'
-      Checked = True
-      OnChange = symmetryCheckBoxChange
-      State = cbChecked
-      TabOrder = 1
-    end
     object weightedCheckBox: TCheckBox
       Left = 96
       Height = 21
-      Top = 31
+      Top = 10
       Width = 81
       Caption = 'gewichtet'
       OnChange = weightedCheckBoxChange
-      TabOrder = 2
+      TabOrder = 1
     end
     object loadButton: TButton
-      Left = 263
+      Left = 272
       Height = 20
       Top = 8
-      Width = 83
+      Width = 90
       Anchors = [akTop, akRight]
       Caption = 'Laden'
       OnClick = loadButtonClick
-      TabOrder = 3
+      TabOrder = 2
     end
     object saveButton: TButton
-      Left = 263
+      Left = 272
       Height = 20
       Top = 32
-      Width = 83
+      Width = 90
       Anchors = [akTop, akRight]
       Caption = 'Speichern'
       OnClick = saveButtonClick
-      TabOrder = 4
+      TabOrder = 3
     end
     object kruskalAlgorithmButton: TButton
-      Left = 349
+      Left = 368
       Height = 20
       Top = 32
-      Width = 100
+      Width = 90
       Anchors = [akTop, akRight]
       Caption = 'Kruskal'
       OnClick = kruskalAlgorithmButtonClick
-      TabOrder = 5
+      TabOrder = 4
     end
     object breadthFirstSearchButton: TButton
-      Left = 454
+      Left = 464
       Height = 20
       Top = 8
-      Width = 100
+      Width = 90
       Anchors = [akTop, akRight]
       Caption = 'Breitensuche'
       OnClick = breadthFirstSearchButtonClick
-      TabOrder = 6
+      TabOrder = 5
     end
     object depthFirstSearchButton: TButton
-      Left = 349
+      Left = 368
       Height = 20
       Top = 8
-      Width = 100
+      Width = 90
       Anchors = [akTop, akRight]
       Caption = 'Tiefensuche'
       OnClick = depthFirstSearchButtonClick
-      TabOrder = 7
+      TabOrder = 6
     end
     object PrimAlgorithmButton: TButton
-      Left = 454
+      Left = 464
       Height = 20
       Top = 32
-      Width = 100
+      Width = 90
       Anchors = [akTop, akRight]
       Caption = 'Prim'
       OnClick = PrimAlgorithmButtonClick
-      TabOrder = 8
+      TabOrder = 7
     end
   end
   object splitter: TSplitter

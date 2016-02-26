@@ -22,12 +22,11 @@ type
       PrimAlgorithmButton, loadButton, saveButton: TButton;
     openDialog: TOpenDialog;
     saveDialog: TSaveDialog;
-    symmetryCheckBox, weightedCheckBox: TCheckBox;
+    weightedCheckBox: TCheckBox;
 
     procedure FormCreate(Sender: TObject);
 
     procedure matrixSizeInputChange(Sender: TObject);
-    procedure symmetryCheckBoxChange(Sender: TObject);
     procedure weightedCheckBoxChange(Sender: TObject);
 
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
@@ -60,7 +59,7 @@ type
 var
   AppForm: TAppForm;
   matrix: TMatrix;
-  weighted, symmetric: boolean;
+  weighted: boolean;
 
 const
   Unset = 0;
@@ -68,7 +67,7 @@ const
   Connected = 1;
 
   FileSeparator = ',';
-  VertexDiameter = 30;
+  VertexDiameter = 24;
 
 implementation
 
@@ -516,7 +515,6 @@ begin
   weightedCheckBoxChange(Sender);
 
   //initialize symmetry and weighted bools
-  symmetric := symmetryCheckBox.checked;
   weighted := weightedCheckBox.checked;
 end;
 
@@ -537,27 +535,6 @@ begin
   //fill new values and refresh UI
   fillMatrix(matrix);
   refreshGrid;
-end;
-
-{ Mirror adjacency matrix if checkbox is checked }
-procedure TAppForm.symmetryCheckBoxChange(Sender: TObject);
-var
-  x, y: Integer;
-begin
-  if symmetryCheckBox.checked then
-  begin
-    symmetric := true;
-
-    //loop through matrix
-    for x := 0 to length(matrix) - 1 do
-      for y := (x + 1) to length(matrix[x]) - 1 do
-        //mirror values from upper half to lower half
-        matrix[x, y] := matrix[y, x];
-
-    refreshGrid;
-  end
-  else
-    symmetric := false;
 end;
 
 { Enable or Disable Editing according to weightedCheckBox }
@@ -618,16 +595,12 @@ begin
   if matrix[aCol - 1, aRow - 1] = Connected then
   begin
     matrix[aCol - 1, aRow - 1] := Unconnected;
-
-    if symmetric then
-      matrix[aRow - 1, aCol - 1] := Unconnected;
+    matrix[aRow - 1, aCol - 1] := Unconnected;
   end
   else
   begin
     matrix[aCol - 1, aRow - 1] := Connected;
-
-    if symmetryCheckBox.checked then
-      matrix[aRow - 1, aCol - 1] := Connected;
+    matrix[aRow - 1, aCol - 1] := Connected;
   end;
 
   refreshGrid;
@@ -639,9 +612,15 @@ procedure TAppForm.gridValidateEntry(sender: TObject; aCol, aRow: Integer;
 begin
   if not (acol = arow) then
     if (NewValue = '-') or (NewValue = '∞') then
-      matrix[aCol - 1, aRow - 1] := Unconnected
+    begin
+      matrix[aCol - 1, aRow - 1] := Unconnected;
+      matrix[aRow - 1, aCol - 1] := Unconnected;
+    end
     else
+    begin
       matrix[aCol - 1, aRow - 1] := StrToInt(NewValue);
+      matrix[aRow - 1, aCol - 1] := StrToInt(NewValue);
+    end;
 
   refreshGrid;
 end;
@@ -672,7 +651,6 @@ begin
     matrixSizeInput.value := StrToInt(meta[0]);
     matrixSizeInputChange(Sender);
 
-    symmetryCheckBox.Checked := StrToBool(meta[1]);
     weightedCheckBox.Checked := StrToBool(meta[2]);
 
     //data
@@ -699,8 +677,7 @@ begin
 
   //convert matrix to stringlist
   //meta info
-  line := IntToStr(length(matrix)) + FileSeparator + BoolToStr(symmetric) +
-    FileSeparator + BoolToStr(weighted);
+  line := IntToStr(length(matrix)) + FileSeparator + BoolToStr(weighted);
   stringlist.append(line);
 
   //data
