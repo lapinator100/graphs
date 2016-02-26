@@ -1,19 +1,20 @@
 object AppForm: TAppForm
-  Left = 325
+  Left = 756
   Height = 437
-  Top = 152
+  Top = 475
   Width = 561
   Caption = 'Graphen'
   ClientHeight = 437
   ClientWidth = 561
   OnCreate = FormCreate
+  OnResize = graphResize
   Position = poDesktopCenter
   LCLVersion = '1.6.0.4'
   object grid: TStringGrid
     Left = 0
     Height = 379
     Top = 58
-    Width = 306
+    Width = 308
     Align = alClient
     ColCount = 3
     DefaultColWidth = 25
@@ -54,79 +55,77 @@ object AppForm: TAppForm
     ClientWidth = 561
     TabOrder = 1
     object matrixSizeInput: TSpinEdit
-      Left = 8
-      Height = 27
+      Left = 12
+      Height = 16
       Top = 10
-      Width = 80
+      Width = 86
       MinValue = 2
       OnChange = matrixSizeInputChange
       TabOrder = 0
       Value = 2
     end
     object weightedCheckBox: TCheckBox
-      Left = 96
-      Height = 21
-      Top = 10
-      Width = 81
+      Left = 104
+      Height = 18
+      Top = 8
+      Width = 80
       Caption = 'gewichtet'
       OnChange = weightedCheckBoxChange
       TabOrder = 1
     end
     object loadButton: TButton
-      Left = 272
+      Left = 8
       Height = 20
-      Top = 8
+      Top = 32
       Width = 90
-      Anchors = [akTop, akRight]
       Caption = 'Laden'
       OnClick = loadButtonClick
       TabOrder = 2
     end
     object saveButton: TButton
-      Left = 272
+      Left = 104
       Height = 20
       Top = 32
       Width = 90
-      Anchors = [akTop, akRight]
       Caption = 'Speichern'
       OnClick = saveButtonClick
       TabOrder = 3
     end
     object kruskalAlgorithmButton: TButton
-      Left = 368
+      Left = 352
       Height = 20
       Top = 32
-      Width = 90
+      Width = 98
       Anchors = [akTop, akRight]
       Caption = 'Kruskal'
       OnClick = kruskalAlgorithmButtonClick
       TabOrder = 4
     end
     object breadthFirstSearchButton: TButton
-      Left = 464
+      Left = 456
       Height = 20
       Top = 8
-      Width = 90
+      Width = 98
       Anchors = [akTop, akRight]
       Caption = 'Breitensuche'
       OnClick = breadthFirstSearchButtonClick
       TabOrder = 5
     end
     object depthFirstSearchButton: TButton
-      Left = 368
+      Left = 352
       Height = 20
       Top = 8
-      Width = 90
+      Width = 98
       Anchors = [akTop, akRight]
       Caption = 'Tiefensuche'
       OnClick = depthFirstSearchButtonClick
       TabOrder = 6
     end
     object PrimAlgorithmButton: TButton
-      Left = 464
+      Left = 456
       Height = 20
       Top = 32
-      Width = 90
+      Width = 98
       Anchors = [akTop, akRight]
       Caption = 'Prim'
       OnClick = PrimAlgorithmButtonClick
@@ -134,22 +133,23 @@ object AppForm: TAppForm
     end
   end
   object splitter: TSplitter
-    Left = 306
+    Left = 308
     Height = 379
     Top = 58
-    Width = 5
+    Width = 3
     Align = alRight
+    OnChangeBounds = graphResize
     OnMoved = graphResize
     ResizeAnchor = akRight
   end
   object saveDialog: TSaveDialog
     DefaultExt = '.admat'
     left = 496
-    top = 392
+    top = 384
   end
   object openDialog: TOpenDialog
     DefaultExt = '.admat'
-    left = 464
-    top = 392
+    left = 416
+    top = 384
   end
 end
