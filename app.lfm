@@ -15,7 +15,7 @@ object AppForm: TAppForm
     Left = 0
     Height = 358
     Top = 58
-    Width = 308
+    Width = 248
     Align = alClient
     ColCount = 3
     DefaultColWidth = 25
@@ -39,10 +39,10 @@ object AppForm: TAppForm
     OnValidateEntry = gridValidateEntry
   end
   object graph: TImage
-    Left = 311
+    Left = 251
     Height = 358
     Top = 58
-    Width = 250
+    Width = 310
     Align = alRight
     OnResize = graphResize
   end
@@ -115,7 +115,7 @@ object AppForm: TAppForm
       TabOrder = 5
     end
     object markOnlyCheckbox: TCheckBox
-      Left = 240
+      Left = 232
       Height = 21
       Top = 8
       Width = 108
@@ -135,9 +135,18 @@ object AppForm: TAppForm
       OnChange = completeCheckBoxChange
       TabOrder = 7
     end
+    object showEdgeWeightsCheckBox: TCheckBox
+      Left = 232
+      Height = 21
+      Top = 31
+      Width = 119
+      Caption = 'Kantengewichte'
+      OnChange = showEdgeWeightsCheckBoxChange
+      TabOrder = 8
+    end
   end
   object splitter: TSplitter
-    Left = 308
+    Left = 248
     Height = 358
     Top = 58
     Width = 3

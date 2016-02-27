@@ -24,6 +24,7 @@ type
   { TAppForm }
 
   TAppForm = class(TForm)
+    showEdgeWeightsCheckBox: TCheckBox;
     completeCheckBox: TCheckBox;
     mainMenu: TMainMenu;
     markOnlyCheckbox: TCheckBox;
@@ -42,7 +43,6 @@ type
     weightedCheckBox: TCheckBox;
 
     procedure FormCreate(Sender: TObject);
-    procedure markOnlyCheckboxChange(Sender: TObject);
 
     procedure openMenuItemClick(Sender: TObject);
     procedure saveMenuItemClick(Sender: TObject);
@@ -50,6 +50,8 @@ type
     procedure matrixSizeInputChange(Sender: TObject);
     procedure weightedCheckBoxChange(Sender: TObject);
     procedure completeCheckBoxChange(Sender: TObject);
+    procedure markOnlyCheckboxChange(Sender: TObject);
+    procedure showEdgeWeightsCheckBoxChange(Sender: TObject);
 
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
     procedure gridValidateEntry(sender: TObject; aCol, aRow: Integer;
@@ -204,6 +206,8 @@ var
   currentEdge: TEdge;
   edges: TEdgeList;
 begin
+  setLength(edges, 0);
+
   //initialize active and processed vertexes list with first vertex
   setLength(activeVertexes, 1);
   activeVertexes[0] := 0;
@@ -254,6 +258,8 @@ var
   currentEdge: TEdge;
   edges: TEdgeList;
 begin
+  setLength(edges, 0);
+
   //initialize active and processed vertexes list with first vertex
   setLength(activeVertexes, 1);
   activeVertexes[0] := 0;
@@ -362,9 +368,6 @@ begin
   //sort all edges ascending
   edges := matrixToEdges(matrix);
   edges := sortEdges(edges, true);
-
-  {for i := 0 to high(edges) do
-    showmessage(inttostr(edges[i].first) + '-' + inttostr(edges[i].second) + ': ' + inttostr(edges[i].weight));   }
 
   //loop edges from lowest to highest
   for i := 0 to high(edges) do
@@ -557,11 +560,6 @@ begin
   weighted := weightedCheckBox.checked;
 end;
 
-procedure TAppForm.markOnlyCheckboxChange(Sender: TObject);
-begin
-  refreshGrid;
-end;
-
 { load from file }
 procedure TAppForm.openMenuItemClick(Sender: TObject);
 var
@@ -677,6 +675,7 @@ begin
     breadthFirstSearchButton.Enabled := False;
     kruskalAlgorithmButton.Enabled := True;
     PrimAlgorithmButton.Enabled := True;
+    showEdgeWeightsCheckBox.Enabled := True;
     grid.Options := grid.Options + [goEditing]
   end
   else
@@ -691,6 +690,7 @@ begin
     breadthFirstSearchButton.Enabled := True;
     kruskalAlgorithmButton.Enabled := False;
     PrimAlgorithmButton.Enabled := False;
+    showEdgeWeightsCheckBox.Enabled := False;
     grid.Options := grid.Options - [goEditing];
   end;
 
@@ -702,6 +702,16 @@ procedure TAppForm.completeCheckBoxChange(Sender: TObject);
 begin
   complete := completeCheckBox.checked;
   clearMatrix(markedMatrix);
+  refreshGrid;
+end;
+
+procedure TAppForm.markOnlyCheckboxChange(Sender: TObject);
+begin
+  refreshGrid;
+end;
+
+procedure TAppForm.showEdgeWeightsCheckBoxChange(Sender: TObject);
+begin
   refreshGrid;
 end;
 
@@ -910,6 +920,10 @@ begin
       p2 := getVertexPoint(table_el, cols, y);
 
       graph.Canvas.Line(p1.x, p1.y, p2.x, p2.y);
+
+      if weighted and showEdgeWeightsCheckBox.checked then
+        graph.Canvas.TextOut(p1.x + (p2.x - p1.x) div 2,
+            p1.y + (p2.y - p1.y) div 2, IntToStr(getElement(x, y)));
     end;
 
   //paint vertices
