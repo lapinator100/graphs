@@ -363,6 +363,9 @@ begin
   edges := matrixToEdges(matrix);
   edges := sortEdges(edges, true);
 
+  {for i := 0 to high(edges) do
+    showmessage(inttostr(edges[i].first) + '-' + inttostr(edges[i].second) + ': ' + inttostr(edges[i].weight));   }
+
   //loop edges from lowest to highest
   for i := 0 to high(edges) do
   begin
@@ -377,11 +380,11 @@ begin
             or (edges[i].first = min_tree[j, k].second) then
           first := j;
         if (edges[i].second = min_tree[j, k].first)
-            or (edges[i].first = min_tree[j, k].second) then
+            or (edges[i].second = min_tree[j, k].second) then
           second := j;
       end;
 
-    //if edge connects 2 clusters, add it
+    //if edge connects 2 clusters or extends one, add it
 
     //add edge as new cluster if not connected to other clusters
     if (first = -1) and (second = -1) then
@@ -391,14 +394,14 @@ begin
       min_tree[high(min_tree), high(min_tree[high(min_tree)])] := edges[i];
     end
     else
-      //add edge to second list if connected to it
+      //add edge to cluster containing second vertex if connected to it
       if first = -1 then
       begin
         setLength(min_tree[second], length(min_tree[second]) + 1);
         min_tree[second, high(min_tree[second])] := edges[i];
       end
       else
-        //add edge to first list if connected to it
+        //add edge to cluster containing first vertex if connected to it
         if second = -1 then
         begin
           setLength(min_tree[first], length(min_tree[first]) + 1);
