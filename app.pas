@@ -643,13 +643,13 @@ var
 begin
   size := matrixSizeInput.value;
 
-  //set size of matrix
-  setLength(matrix, size, size);
-  setLength(markedMatrix, size, size);
-
   //adapt size of grid
   grid.RowCount := size + 1;
   grid.ColCount := size + 1;
+
+  //set size of matrix
+  setLength(matrix, size, size);
+  setLength(markedMatrix, size, size);
 
   //fill new values and refresh UI
   fillMatrix(matrix);

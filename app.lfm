@@ -17,6 +17,7 @@ object AppForm: TAppForm
     Top = 58
     Width = 248
     Align = alClient
+    BorderStyle = bsNone
     ColCount = 3
     DefaultColWidth = 25
     DefaultRowHeight = 25
