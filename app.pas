@@ -42,6 +42,7 @@ type
     weightedCheckBox: TCheckBox;
 
     procedure FormCreate(Sender: TObject);
+    procedure markOnlyCheckboxChange(Sender: TObject);
 
     procedure openMenuItemClick(Sender: TObject);
     procedure saveMenuItemClick(Sender: TObject);
@@ -133,6 +134,24 @@ begin
     result := Connected
   else
     result := matrix[x, y];
+end;
+
+function getVertexValue(edge: TEdge): Integer;
+var
+  low, high: Integer;
+begin
+  if edge.first < edge.second then
+  begin
+    low := edge.first;
+    high := edge.second;
+  end
+  else
+  begin
+    low := edge.second;
+    high := edge.first;
+  end;
+
+  result := low * length(matrix) + high;
 end;
 
 { Test wether a certain vertex is contained in list for vertices given }
@@ -300,7 +319,7 @@ begin
   result := edges;
 end;
 
-{ sort edges (upper half) by weight ascending or descending (bubble sort) }       //TODO: Prefer edges with lowest vertex
+{ sort edges (upper half) by weight ascending or descending (bubble sort) }
 function sortEdges(edges: TEdgeList; ascending: Boolean): TEdgeList;
 var
   i: Integer;
@@ -313,8 +332,8 @@ begin
 
     for i := 0 to length(edges) - 2 do
     begin
-      if ((edges[i].weight > edges[i + 1].weight) and ascending) or
-        ((edges[i].weight < edges[i + 1].weight) and (not ascending)) then
+      if (((edges[i].weight > edges[i + 1].weight) or (getVertexValue(edges[i]) > getVertexValue(edges[i + 1]))) and ascending) or
+        (((edges[i].weight < edges[i + 1].weight) or (getVertexValue(edges[i]) < getVertexValue(edges[i + 1]))) and (not ascending)) then
       begin
         temp := edges[i];
         edges[i] := edges[i + 1];
@@ -533,6 +552,11 @@ begin
 
   //initialize symmetry and weighted bools
   weighted := weightedCheckBox.checked;
+end;
+
+procedure TAppForm.markOnlyCheckboxChange(Sender: TObject);
+begin
+  refreshGrid;
 end;
 
 { load from file }
@@ -797,6 +821,7 @@ begin
     clearMatrix(matrix);
     clearMatrix(markedMatrix);
     applyEdgesToMatrix(matrix, edges);
+    completeCheckBox.checked := False;
   end;
 
   refreshGrid;
@@ -865,7 +890,7 @@ begin
   for x := 0 to high(matrix) do
     for y := 0 to high(matrix) do
     begin
-      if markedMatrix[x, y] <> Unconnected then
+      if (markedMatrix[x, y] <> Unconnected) and markOnlyCheckbox.checked then
       begin
          graph.Canvas.Pen.Color := clGreen;
          graph.Canvas.Pen.Width := 3;

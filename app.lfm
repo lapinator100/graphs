@@ -122,6 +122,7 @@ object AppForm: TAppForm
       Anchors = [akTop, akRight]
       Caption = 'nur markieren'
       Checked = True
+      OnChange = markOnlyCheckboxChange
       State = cbChecked
       TabOrder = 6
     end
@@ -147,16 +148,16 @@ object AppForm: TAppForm
   end
   object saveDialog: TSaveDialog
     DefaultExt = '.admat'
-    left = 496
+    left = 528
     top = 384
   end
   object openDialog: TOpenDialog
     DefaultExt = '.admat'
-    left = 416
+    left = 496
     top = 384
   end
   object mainMenu: TMainMenu
-    left = 352
+    left = 464
     top = 384
     object fileMenuItem: TMenuItem
       Caption = 'Datei'
