@@ -1,11 +1,13 @@
 object AppForm: TAppForm
-  Left = 394
-  Height = 437
-  Top = 176
-  Width = 561
+  Left = 725
+  Height = 480
+  Top = 339
+  Width = 640
   Caption = 'Graphen'
-  ClientHeight = 416
-  ClientWidth = 561
+  ClientHeight = 480
+  ClientWidth = 640
+  Constraints.MinHeight = 240
+  Constraints.MinWidth = 560
   Menu = mainMenu
   OnCreate = FormCreate
   OnResize = graphResize
@@ -13,53 +15,56 @@ object AppForm: TAppForm
   LCLVersion = '1.6.0.4'
   object grid: TStringGrid
     Left = 0
-    Height = 358
-    Top = 58
-    Width = 248
+    Height = 420
+    Top = 60
+    Width = 292
     Align = alClient
     BorderStyle = bsNone
+    Color = clWhite
     ColCount = 3
-    DefaultColWidth = 25
-    DefaultRowHeight = 25
+    DefaultColWidth = 28
+    DefaultRowHeight = 28
     Flat = True
     Font.CharSet = ANSI_CHARSET
     Font.Height = -16
     Font.Name = 'Myriad Condensed Web'
     Font.Pitch = fpVariable
-    Font.Quality = fqDraft
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goAlwaysShowEditor, goSmoothScroll]
+    Font.Quality = fqAntialiased
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goTabs, goAlwaysShowEditor, goRelaxedRowSelect, goSmoothScroll, goCellHints]
     ParentFont = False
+    ParentShowHint = False
     RowCount = 3
+    ShowHint = True
     TabOrder = 0
     TitleFont.CharSet = ANSI_CHARSET
     TitleFont.Height = -16
     TitleFont.Name = 'Myriad Condensed Web'
     TitleFont.Pitch = fpVariable
-    TitleFont.Quality = fqDraft
+    TitleFont.Quality = fqAntialiased
     OnSelectCell = gridSelectCell
     OnValidateEntry = gridValidateEntry
   end
   object graph: TImage
-    Left = 251
-    Height = 358
-    Top = 58
-    Width = 310
+    Left = 295
+    Height = 420
+    Top = 60
+    Width = 345
     Align = alRight
     OnResize = graphResize
   end
   object panel: TPanel
     Left = 0
-    Height = 58
+    Height = 60
     Top = 0
-    Width = 561
+    Width = 640
     Align = alTop
-    ClientHeight = 58
-    ClientWidth = 561
+    ClientHeight = 60
+    ClientWidth = 640
     TabOrder = 1
     object matrixSizeInput: TSpinEdit
-      Left = 8
-      Height = 27
-      Top = 8
+      Left = 10
+      Height = 16
+      Top = 31
       Width = 86
       MinValue = 2
       OnChange = matrixSizeInputChange
@@ -67,16 +72,16 @@ object AppForm: TAppForm
       Value = 2
     end
     object weightedCheckBox: TCheckBox
-      Left = 96
-      Height = 21
+      Left = 104
+      Height = 18
       Top = 8
-      Width = 81
+      Width = 80
       Caption = 'gewichtet'
       OnChange = weightedCheckBoxChange
       TabOrder = 1
     end
     object kruskalAlgorithmButton: TButton
-      Left = 352
+      Left = 431
       Height = 20
       Top = 32
       Width = 98
@@ -86,7 +91,7 @@ object AppForm: TAppForm
       TabOrder = 2
     end
     object breadthFirstSearchButton: TButton
-      Left = 456
+      Left = 535
       Height = 20
       Top = 8
       Width = 98
@@ -96,7 +101,7 @@ object AppForm: TAppForm
       TabOrder = 3
     end
     object depthFirstSearchButton: TButton
-      Left = 352
+      Left = 431
       Height = 20
       Top = 8
       Width = 98
@@ -106,7 +111,7 @@ object AppForm: TAppForm
       TabOrder = 4
     end
     object PrimAlgorithmButton: TButton
-      Left = 456
+      Left = 535
       Height = 20
       Top = 32
       Width = 98
@@ -116,10 +121,10 @@ object AppForm: TAppForm
       TabOrder = 5
     end
     object markOnlyCheckbox: TCheckBox
-      Left = 232
-      Height = 21
-      Top = 8
-      Width = 108
+      Left = 303
+      Height = 18
+      Top = 10
+      Width = 104
       Anchors = [akTop, akRight]
       Caption = 'nur markieren'
       Checked = True
@@ -128,29 +133,37 @@ object AppForm: TAppForm
       TabOrder = 6
     end
     object completeCheckBox: TCheckBox
-      Left = 96
-      Height = 21
+      Left = 104
+      Height = 18
       Top = 31
-      Width = 87
+      Width = 86
       Caption = 'vollständig'
       OnChange = completeCheckBoxChange
       TabOrder = 7
     end
     object showEdgeWeightsCheckBox: TCheckBox
-      Left = 232
-      Height = 21
-      Top = 31
-      Width = 119
+      Left = 303
+      Height = 18
+      Top = 33
+      Width = 118
       Anchors = [akTop, akRight]
       Caption = 'Kantengewichte'
       OnChange = showEdgeWeightsCheckBoxChange
       TabOrder = 8
     end
+    object sizeLabel: TLabel
+      Left = 8
+      Height = 16
+      Top = 8
+      Width = 86
+      Caption = 'Knotenanzahl'
+      ParentColor = False
+    end
   end
   object splitter: TSplitter
-    Left = 248
-    Height = 358
-    Top = 58
+    Left = 292
+    Height = 420
+    Top = 60
     Width = 3
     Align = alRight
     OnChangeBounds = graphResize
@@ -159,17 +172,17 @@ object AppForm: TAppForm
   end
   object saveDialog: TSaveDialog
     DefaultExt = '.admat'
-    left = 528
-    top = 384
+    left = 584
+    top = 424
   end
   object openDialog: TOpenDialog
     DefaultExt = '.admat'
-    left = 496
-    top = 384
+    left = 552
+    top = 424
   end
   object mainMenu: TMainMenu
-    left = 464
-    top = 384
+    left = 520
+    top = 424
     object fileMenuItem: TMenuItem
       Caption = 'Datei'
       object openMenuItem: TMenuItem

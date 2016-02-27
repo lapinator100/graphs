@@ -24,6 +24,7 @@ type
   { TAppForm }
 
   TAppForm = class(TForm)
+    sizeLabel: TLabel;
     showEdgeWeightsCheckBox: TCheckBox;
     completeCheckBox: TCheckBox;
     mainMenu: TMainMenu;
@@ -549,7 +550,13 @@ end;
 
 { executed on form creation }
 procedure TAppForm.FormCreate(Sender: TObject);
+var
+  gridTextStyle: TTextStyle;
 begin
+  gridTextStyle := grid.DefaultTextStyle;
+  gridTextStyle.Alignment := taCenter;
+  grid.DefaultTextStyle := gridTextStyle;
+
   //emulate change of adjacency matrix's size for initialization
   matrixSizeInputChange(Sender);
   //imitate change of weightedCheckBox and completeCheckBox
