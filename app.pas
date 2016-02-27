@@ -614,8 +614,8 @@ begin
   grid.ColCount := size + 1;
 
   //fill new values and refresh UI
-  clearMatrix(matrix);
   fillMatrix(matrix);
+  clearMatrix(markedMatrix);
   fillMatrix(markedMatrix);
   refreshGrid;
 end;
@@ -786,6 +786,7 @@ procedure TAppForm.refreshGrid;
 var
   x, y: Integer;
 begin
+  //header captions
   for x := 1 to grid.ColCount - 1 do
     grid.Cells[x, 0] := IntToStr(x);
   for y := 1 to grid.RowCount - 1 do
