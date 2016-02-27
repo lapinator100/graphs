@@ -141,6 +141,7 @@ object AppForm: TAppForm
       Height = 21
       Top = 31
       Width = 119
+      Anchors = [akTop, akRight]
       Caption = 'Kantengewichte'
       OnChange = showEdgeWeightsCheckBoxChange
       TabOrder = 8
