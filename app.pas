@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Grids, Spin,
-  StdCtrls, ExtCtrls, Types;
+  StdCtrls, ExtCtrls, Menus, Types;
 
 type
 
@@ -24,19 +24,26 @@ type
   { TAppForm }
 
   TAppForm = class(TForm)
+    mainMenu: TMainMenu;
     markOnlyCheckbox: TCheckBox;
+    openMenuItem: TMenuItem;
+    saveMenuItem: TMenuItem;
+    fileMenuItem: TMenuItem;
     panel: TPanel;
     matrixSizeInput: TSpinEdit;
     grid: TStringGrid;
     graph: TImage;
     splitter: TSplitter;
     breadthFirstSearchButton, depthFirstSearchButton, kruskalAlgorithmButton,
-      PrimAlgorithmButton, loadButton, saveButton: TButton;
+      PrimAlgorithmButton: TButton;
     openDialog: TOpenDialog;
     saveDialog: TSaveDialog;
     weightedCheckBox: TCheckBox;
 
     procedure FormCreate(Sender: TObject);
+
+    procedure openMenuItemClick(Sender: TObject);
+    procedure saveMenuItemClick(Sender: TObject);
 
     procedure matrixSizeInputChange(Sender: TObject);
     procedure weightedCheckBoxChange(Sender: TObject);
@@ -45,9 +52,6 @@ type
     procedure gridValidateEntry(sender: TObject; aCol, aRow: Integer;
       const OldValue: string; var NewValue: String);
     procedure graphResize(Sender: TObject);
-
-    procedure loadButtonClick(Sender: TObject);
-    procedure saveButtonClick(Sender: TObject);
 
     procedure breadthFirstSearchButtonClick(Sender: TObject);
     procedure depthFirstSearchButtonClick(Sender: TObject);
@@ -520,6 +524,80 @@ begin
   weighted := weightedCheckBox.checked;
 end;
 
+{ load from file }
+procedure TAppForm.openMenuItemClick(Sender: TObject);
+var
+  x, y: Integer;
+  line: String;
+  meta, row: TStringArray;
+  stringlist: TStringList;
+begin
+  if openDialog.Execute then
+  begin
+    stringlist := TStringList.create;
+    stringlist.loadFromFile(openDialog.FileName);
+
+    //meta
+    meta := split(stringlist.ValueFromIndex[0], FileSeparator);
+
+    matrixSizeInput.value := StrToInt(meta[0]);
+    matrixSizeInputChange(Sender);
+
+    weightedCheckBox.Checked := StrToBool(meta[2]);
+
+    //data
+    for y := 0 to high(matrix) do
+    begin
+      line := stringlist.ValueFromIndex[y + 1];
+      row := split(line, FileSeparator);
+      for x := 0 to high(matrix) do
+        matrix[x, y] := StrToInt(row[x]);
+    end;
+
+    refreshGrid;
+  end;
+end;
+
+{ save to file }
+procedure TAppForm.saveMenuItemClick(Sender: TObject);
+var
+  x, y: Integer;
+  line: String;
+  stringlist: TStringList;
+begin
+  stringlist := TStringList.create;
+
+  //convert matrix to stringlist
+  //meta info
+  line := IntToStr(length(matrix)) + FileSeparator + BoolToStr(weighted);
+  stringlist.append(line);
+
+  //data
+  for y := 0 to high(matrix) do
+  begin
+    line := '';
+    for x := 0 to high(matrix) do
+    begin
+      line += IntToStr(matrix[x, y]);
+      if x < high(matrix) then
+        line += FileSeparator;
+    end;
+
+    stringlist.add(line);
+  end;
+
+  //request file path
+  if saveDialog.Execute then
+  begin
+    //save
+    try
+      stringlist.saveToFile(saveDialog.fileName);
+    finally
+      stringlist.free;
+    end;
+  end;
+end;
+
 { Handle change of matrix size matrixSizeInput value }
 procedure TAppForm.matrixSizeInputChange(Sender: TObject);
 var
@@ -636,80 +714,6 @@ procedure TAppForm.graphResize(Sender: TObject);
 begin
   graph.Picture.Bitmap.SetSize(graph.width, graph.height);
   refreshGraph;
-end;
-
-{ load from file }
-procedure TAppForm.loadButtonClick(Sender: TObject);
-var
-  x, y: Integer;
-  line: String;
-  meta, row: TStringArray;
-  stringlist: TStringList;
-begin
-  if openDialog.Execute then
-  begin
-    stringlist := TStringList.create;
-    stringlist.loadFromFile(openDialog.FileName);
-
-    //meta
-    meta := split(stringlist.ValueFromIndex[0], FileSeparator);
-
-    matrixSizeInput.value := StrToInt(meta[0]);
-    matrixSizeInputChange(Sender);
-
-    weightedCheckBox.Checked := StrToBool(meta[2]);
-
-    //data
-    for y := 0 to high(matrix) do
-    begin
-      line := stringlist.ValueFromIndex[y + 1];
-      row := split(line, FileSeparator);
-      for x := 0 to high(matrix) do
-        matrix[x, y] := StrToInt(row[x]);
-    end;
-
-    refreshGrid;
-  end;
-end;
-
-{ save to file }
-procedure TAppForm.saveButtonClick(Sender: TObject);
-var
-  x, y: Integer;
-  line: String;
-  stringlist: TStringList;
-begin
-  stringlist := TStringList.create;
-
-  //convert matrix to stringlist
-  //meta info
-  line := IntToStr(length(matrix)) + FileSeparator + BoolToStr(weighted);
-  stringlist.append(line);
-
-  //data
-  for y := 0 to high(matrix) do
-  begin
-    line := '';
-    for x := 0 to high(matrix) do
-    begin
-      line += IntToStr(matrix[x, y]);
-      if x < high(matrix) then
-        line += FileSeparator;
-    end;
-
-    stringlist.add(line);
-  end;
-
-  //request file path
-  if saveDialog.Execute then
-  begin
-    //save
-    try
-      stringlist.saveToFile(saveDialog.fileName);
-    finally
-      stringlist.free;
-    end;
-  end;
 end;
 
 { Perform breadth-first serach on adjacency matrix }

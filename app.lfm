@@ -1,19 +1,20 @@
 object AppForm: TAppForm
-  Left = 713
+  Left = 394
   Height = 437
-  Top = 495
+  Top = 176
   Width = 561
   Caption = 'Graphen'
-  ClientHeight = 437
+  ClientHeight = 416
   ClientWidth = 561
+  Menu = mainMenu
   OnCreate = FormCreate
   OnResize = graphResize
   Position = poDesktopCenter
   LCLVersion = '1.6.0.4'
   object grid: TStringGrid
     Left = 0
-    Height = 355
-    Top = 82
+    Height = 358
+    Top = 58
     Width = 308
     Align = alClient
     ColCount = 3
@@ -39,25 +40,25 @@ object AppForm: TAppForm
   end
   object graph: TImage
     Left = 311
-    Height = 355
-    Top = 82
+    Height = 358
+    Top = 58
     Width = 250
     Align = alRight
     OnResize = graphResize
   end
   object panel: TPanel
     Left = 0
-    Height = 82
+    Height = 58
     Top = 0
     Width = 561
     Align = alTop
-    ClientHeight = 82
+    ClientHeight = 58
     ClientWidth = 561
     TabOrder = 1
     object matrixSizeInput: TSpinEdit
-      Left = 12
-      Height = 16
-      Top = 10
+      Left = 8
+      Height = 27
+      Top = 8
       Width = 86
       MinValue = 2
       OnChange = matrixSizeInputChange
@@ -65,31 +66,13 @@ object AppForm: TAppForm
       Value = 2
     end
     object weightedCheckBox: TCheckBox
-      Left = 104
-      Height = 18
+      Left = 96
+      Height = 21
       Top = 8
-      Width = 80
+      Width = 81
       Caption = 'gewichtet'
       OnChange = weightedCheckBoxChange
       TabOrder = 1
-    end
-    object loadButton: TButton
-      Left = 8
-      Height = 20
-      Top = 32
-      Width = 90
-      Caption = 'Laden'
-      OnClick = loadButtonClick
-      TabOrder = 2
-    end
-    object saveButton: TButton
-      Left = 104
-      Height = 20
-      Top = 32
-      Width = 90
-      Caption = 'Speichern'
-      OnClick = saveButtonClick
-      TabOrder = 3
     end
     object kruskalAlgorithmButton: TButton
       Left = 352
@@ -99,7 +82,7 @@ object AppForm: TAppForm
       Anchors = [akTop, akRight]
       Caption = 'Kruskal'
       OnClick = kruskalAlgorithmButtonClick
-      TabOrder = 4
+      TabOrder = 2
     end
     object breadthFirstSearchButton: TButton
       Left = 456
@@ -109,7 +92,7 @@ object AppForm: TAppForm
       Anchors = [akTop, akRight]
       Caption = 'Breitensuche'
       OnClick = breadthFirstSearchButtonClick
-      TabOrder = 5
+      TabOrder = 3
     end
     object depthFirstSearchButton: TButton
       Left = 352
@@ -119,7 +102,7 @@ object AppForm: TAppForm
       Anchors = [akTop, akRight]
       Caption = 'Tiefensuche'
       OnClick = depthFirstSearchButtonClick
-      TabOrder = 6
+      TabOrder = 4
     end
     object PrimAlgorithmButton: TButton
       Left = 456
@@ -129,22 +112,24 @@ object AppForm: TAppForm
       Anchors = [akTop, akRight]
       Caption = 'Prim'
       OnClick = PrimAlgorithmButtonClick
-      TabOrder = 7
+      TabOrder = 5
     end
     object markOnlyCheckbox: TCheckBox
-      Left = 355
-      Height = 18
-      Top = 58
-      Width = 175
+      Left = 240
+      Height = 21
+      Top = 8
+      Width = 108
       Anchors = [akTop, akRight]
-      Caption = 'Ergebnisse nur markieren'
-      TabOrder = 8
+      Caption = 'nur markieren'
+      Checked = True
+      State = cbChecked
+      TabOrder = 6
     end
   end
   object splitter: TSplitter
     Left = 308
-    Height = 355
-    Top = 82
+    Height = 358
+    Top = 58
     Width = 3
     Align = alRight
     OnChangeBounds = graphResize
@@ -160,5 +145,22 @@ object AppForm: TAppForm
     DefaultExt = '.admat'
     left = 416
     top = 384
+  end
+  object mainMenu: TMainMenu
+    left = 352
+    top = 384
+    object fileMenuItem: TMenuItem
+      Caption = 'Datei'
+      object openMenuItem: TMenuItem
+        Caption = 'Öffnen'
+        ShortCut = 16463
+        OnClick = openMenuItemClick
+      end
+      object saveMenuItem: TMenuItem
+        Caption = 'Speichern'
+        ShortCut = 16467
+        OnClick = saveMenuItemClick
+      end
+    end
   end
 end
