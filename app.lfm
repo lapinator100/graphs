@@ -125,6 +125,15 @@ object AppForm: TAppForm
       State = cbChecked
       TabOrder = 6
     end
+    object completeCheckBox: TCheckBox
+      Left = 96
+      Height = 21
+      Top = 31
+      Width = 87
+      Caption = 'vollständig'
+      OnChange = completeCheckBoxChange
+      TabOrder = 7
+    end
   end
   object splitter: TSplitter
     Left = 308

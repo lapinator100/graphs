@@ -24,6 +24,7 @@ type
   { TAppForm }
 
   TAppForm = class(TForm)
+    completeCheckBox: TCheckBox;
     mainMenu: TMainMenu;
     markOnlyCheckbox: TCheckBox;
     openMenuItem: TMenuItem;
@@ -47,6 +48,7 @@ type
 
     procedure matrixSizeInputChange(Sender: TObject);
     procedure weightedCheckBoxChange(Sender: TObject);
+    procedure completeCheckBoxChange(Sender: TObject);
 
     procedure gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
     procedure gridValidateEntry(sender: TObject; aCol, aRow: Integer;
@@ -66,7 +68,7 @@ type
 var
   AppForm: TAppForm;
   matrix, markedMatrix: TMatrix;
-  weighted: boolean;
+  weighted, complete: boolean;
 
 const
   Unset = 0;
@@ -125,6 +127,14 @@ begin
   end;
 end;
 
+function getElement(x, y: Integer): Integer;
+begin
+  if complete and (x <> y) then
+    result := Connected
+  else
+    result := matrix[x, y];
+end;
+
 { Test wether a certain vertex is contained in list for vertices given }
 function isVertexInList(vertex: Integer; vertexList: TVertexList): Boolean;
 var
@@ -155,7 +165,7 @@ begin
   //loop through adjacency matrix column for vertex given
   for y := 0 to length(matrix[vertex]) - 1 do
     //early return vertex if is connected and not in to-be-excluded list
-    if (matrix[vertex, y] = Connected) and (not isVertexInList(y, exludeVertexes)) then
+    if (getElement(vertex, y) = Connected) and (not isVertexInList(y, exludeVertexes)) then
     begin
       result := y;
       exit;
@@ -281,10 +291,10 @@ begin
 
   for x := 1 to high(matrix) do
     for y := 0 to x - 1 do
-      if matrix[x, y] <> Unconnected then
+      if getElement(x, y) <> Unconnected then
       begin
         setLength(edges, length(edges) + 1);
-        edges[high(edges)] := createEdge(x, y, matrix[x, y]);
+        edges[high(edges)] := createEdge(x, y, getElement(x, y));
       end;
 
   result := edges;
@@ -439,11 +449,11 @@ begin
       for j := 0 to length(v_pending) - 1 do
       begin
         //add connected neighbours to list
-        if matrix[v_done[i], v_pending[j]] <> Unconnected then
+        if getElement(v_done[i], v_pending[j]) <> Unconnected then
         begin
           setlength(e_neighbours, length(e_neighbours) + 1);
           e_neighbours[high(e_neighbours)] := createEdge(v_done[i],
-            v_pending[j], matrix[v_done[i], v_pending[j]]);
+            v_pending[j], getElement(v_done[i], v_pending[j]));
         end;
       end;
 
@@ -517,8 +527,9 @@ procedure TAppForm.FormCreate(Sender: TObject);
 begin
   //emulate change of adjacency matrix's size for initialization
   matrixSizeInputChange(Sender);
-  //imitate change of weightedCheckBox
+  //imitate change of weightedCheckBox and completeCheckBox
   weightedCheckBoxChange(Sender);
+  completeCheckBoxChange(Sender);
 
   //initialize symmetry and weighted bools
   weighted := weightedCheckBox.checked;
@@ -543,7 +554,8 @@ begin
     matrixSizeInput.value := StrToInt(meta[0]);
     matrixSizeInputChange(Sender);
 
-    weightedCheckBox.Checked := StrToBool(meta[2]);
+    weightedCheckBox.Checked := StrToBool(meta[1]);
+    completeCheckBox.Checked := StrToBool(meta[2]);
 
     //data
     for y := 0 to high(matrix) do
@@ -569,7 +581,8 @@ begin
 
   //convert matrix to stringlist
   //meta info
-  line := IntToStr(length(matrix)) + FileSeparator + BoolToStr(weighted);
+  line := IntToStr(length(matrix)) + FileSeparator + BoolToStr(weighted)
+    + FileSeparator + BoolToStr(complete);
   stringlist.append(line);
 
   //data
@@ -657,6 +670,14 @@ begin
   refreshGrid;
 end;
 
+{ change complete and refresh }
+procedure TAppForm.completeCheckBoxChange(Sender: TObject);
+begin
+  complete := completeCheckBox.checked;
+  clearMatrix(markedMatrix);
+  refreshGrid;
+end;
+
 { Handle cell selection in grid }
 procedure TAppForm.gridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
 begin
@@ -675,7 +696,7 @@ begin
     exit;
 
   //change vertex state based on its current state
-  if matrix[aCol - 1, aRow - 1] = Connected then
+  if getElement(aCol - 1, aRow - 1) = Connected then
   begin
     matrix[aCol - 1, aRow - 1] := Unconnected;
     matrix[aRow - 1, aCol - 1] := Unconnected;
@@ -797,18 +818,17 @@ begin
     for y := 0 to length(matrix[x]) - 1 do
       //make sure coordinates are inside bounds of grid
       if (x < grid.ColCount - 1) and (y < grid.RowCount - 1) then
-        //grid.Cells[x + 1, y + 1] := IntToStr(matrix[x, y]);exit;               //for testing
         //display '∞' for unconnected and else the element's value if weighted
         if weighted then
-          if matrix[x, y] = Unconnected then
+          if getElement(x, y) = Unconnected then
             grid.Cells[x + 1, y + 1] := '∞'
           else
-            grid.Cells[x + 1, y + 1] := IntToStr(matrix[x, y])
+            grid.Cells[x + 1, y + 1] := IntToStr(getElement(x, y))
         else
         //display '0' for unconnected and '1' for connected if matrix is not weighted
-          if matrix[x, y] = Unconnected then
+          if getElement(x, y) = Unconnected then
             grid.Cells[x + 1, y + 1] := '0'
-          else if matrix[x, y] = Connected then
+          else if getElement(x, y) = Connected then
             grid.Cells[x + 1, y + 1] := '1';
 
     refreshGraph;
@@ -850,7 +870,7 @@ begin
          graph.Canvas.Pen.Color := clGreen;
          graph.Canvas.Pen.Width := 3;
       end
-      else if matrix[x, y] <> Unconnected then
+      else if getElement(x, y) <> Unconnected then
       begin
          graph.Canvas.pen.Color := clBlack;
          graph.Canvas.Pen.Width := 1;
